@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap");
+
+* {
+  margin: 0;
+}
+/* 
+--blue: #2d00f7ff;
+--electric-indigo: #6a00f4ff;
+--electric-violet: #8900f2ff;
+--purple-x-11: #a100f2ff;
+--purple-x-11-2: #b100e8ff;
+--electric-purple: #bc00ddff;
+--steel-pink: #d100d1ff;
+--steel-pink-2: #db00b6ff;
+--fashion-fuchsia: #e500a4ff;
+--magenta-process: #f20089ff; */
+
+body * {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: row; /* I know no need to mention */
+}
+
+.evenly {
+  justify-content: space-evenly;
+}
+
+.between {
+  justify-content: space-between;
+}
+
+.center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.t-center {
+  align-items: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style-type: none;
+}
+
+h1 {
+  font-size: 45px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 35px;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: 26px;
+  font-weight: 400;
+}
+
+h4 {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+h5 {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100vh;
+}
+
+.app__changeableContent {
+  flex: 0.775;
+}
