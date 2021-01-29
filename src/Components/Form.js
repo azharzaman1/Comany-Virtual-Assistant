@@ -4,6 +4,7 @@ import {
   Checkbox,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   Grid,
   InputLabel,
@@ -15,22 +16,29 @@ import {
 } from "@material-ui/core";
 import "./Form.css";
 import { companyRoles } from "./files/comapnyRoles";
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { validateEmail, resetForm } from "./files/FormValidation";
+import { getFromLocalStorage, setToLocalStorage } from "./files/LocalStorage";
+import DatePicker from "./DatePicker";
+import { useSelector } from "react-redux";
+import { selectEmployeesList } from "../redux/slices/employeesSlice";
 
 const Form = () => {
+  const employeesList = useSelector(selectEmployeesList);
   const [fullName, setFullName] = useState("");
+  const [nameError, setNameError] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState(false);
   const [city, setCity] = useState("");
+  const [cityError, setCityError] = useState(false);
   const [pay, setPay] = useState("");
   const [gender, setGender] = useState("male");
   const [role, setRole] = useState("Select");
+  const [roleError, setRoleError] = useState(false);
   const [newRole, setNewRole] = useState("");
   const [hireDate, setHireDate] = useState(new Date());
+  const [hireDateError, setHireDateError] = useState(false);
   const [expiryDate, setExpiryDate] = useState(new Date());
   const [checkboxState, setCheckboxState] = useState(false);
   const [companyRolesList, setCompanyRolesList] = useState(companyRoles);
@@ -53,16 +61,96 @@ const Form = () => {
     console.log([]);
   };
 
-  const submitForm = () => {
-    console.log("Form Submitted");
+  const submitForm = async () => {
+    if (fullName === "") {
+      setNameError(true);
+    } else {
+      setNameError(false);
+    }
+
+    if (validateEmail(email)) {
+      // if email valid => return true
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+
+    if (phone.length >= 10) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+
+    if (city === "") {
+      setCityError(true);
+    } else {
+      setCityError(false);
+    }
+
+    if (role === "Select") {
+      setRoleError(true);
+    } else {
+      setRoleError(false);
+    }
+
+    if (hireDate === new Date()) {
+      setHireDateError(true);
+    } else {
+      setHireDateError(false);
+    }
+
+    if (
+      fullName === "" &&
+      !validateEmail(email) &&
+      phone.length < 10 &&
+      city === "" &&
+      role === "Select" &&
+      role
+    ) {
+      alert("You Employee could not be added, please check details again!");
+    } else {
+      await setEmployee();
+      resetFormHandler();
+    }
   };
 
-  const resetForm = () => {
-    console.log("Trying to resset");
+  const setEmployee = () => {
+    console.log("Wokring");
+    const employeesList = getFromLocalStorage("employeesList");
+
+    const newEmploye = {
+      employeeID: new Date(),
+      employeeName: fullName,
+      employeeEmail: email,
+      employeePhone: phone,
+      employeeCity: city,
+      employeePayPerYear: pay,
+      employeeGender: gender,
+      employeeDepartment: role,
+      employeeHiredDate: hireDate,
+      isPermanent: checkboxState,
+      employeeContractExpiry: expiryDate,
+    };
+
+    employeesList.push(newEmploye);
+
+    console.log(employeesList);
+
+    setToLocalStorage("employeesList", employeesList);
   };
-  // const disableSubmit = () => {
-  //   if(fullName === '' || email ===  || role || )
-  // }
+
+  const resetFormHandler = () => {
+    setFullName("");
+    setEmail("");
+    setPhone("");
+    setCity("");
+    setPay("");
+    setGender("male");
+    setRole("Select");
+    setHireDate(new Date());
+    setCheckboxState(false);
+    setExpiryDate(new Date());
+  };
 
   return (
     <form className="form">
@@ -75,6 +163,8 @@ const Form = () => {
             label="Full name"
             onChange={(e) => setFullName(e.target.value)}
             className="form__input"
+            error={nameError}
+            helperText={nameError ? "This feild is required" : ""}
           />
           <TextField
             variant="outlined"
@@ -82,13 +172,19 @@ const Form = () => {
             label="Email"
             onChange={(e) => setEmail(e.target.value)}
             className="form__input"
+            error={emailError}
+            helperText={emailError ? "Please enter valid email address" : ""}
           />
           <TextField
             variant="outlined"
             value={phone}
-            label="Phone #"
+            label="Phone # (XXXXXXXXXX)"
             onChange={(e) => setPhone(e.target.value)}
             className="form__input"
+            error={phoneError}
+            helperText={
+              phoneError ? "Phone no should be atleast 10 digits long!" : ""
+            }
           />
           <TextField
             variant="outlined"
@@ -96,11 +192,13 @@ const Form = () => {
             label="City"
             onChange={(e) => setCity(e.target.value)}
             className="form__input"
+            error={cityError}
+            helperText={cityError ? "This field is required" : ""}
           />
           <TextField
             variant="outlined"
             value={pay}
-            label="Current Pay/Year (e.g. 50,000)"
+            label="Current Pay/Year (e.g. 50,000) (optional)"
             onChange={(e) => setPay(e.target.value)}
             className="form__input"
           />
@@ -134,14 +232,25 @@ const Form = () => {
               label="Department"
               value={role}
               onChange={(e) => setRole(e.target.value)}
+              error={roleError}
+              className="dropdown__department"
             >
               {companyRoles &&
                 companyRoles.map((role) => (
-                  <MenuItem key={role.value} value={role.value}>
+                  <MenuItem
+                    className="dropdown__item"
+                    key={role.value}
+                    value={role.value}
+                  >
                     {role.name}
                   </MenuItem>
                 ))}
             </Select>
+            <FormHelperText style={{ color: "rgb(241, 41, 41)" }}>
+              {roleError
+                ? "Please select department | or add new by selecting other."
+                : ""}
+            </FormHelperText>
           </FormControl>
 
           {/* Conditional Role */}
@@ -161,22 +270,12 @@ const Form = () => {
             </>
           )}
 
-          {/* Data Pickers */}
-
-          <FormControl className="form__input">
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                variant="inline"
-                inputVariant="outlined"
-                label="Hire Date"
-                name="hireDate"
-                format="MM/dd/yyyy"
-                disableToolbar
-                value={hireDate}
-                onChange={(date) => setHireDate(date)}
-              />
-            </MuiPickersUtilsProvider>
-          </FormControl>
+          <DatePicker
+            value={hireDate}
+            name="hireDate"
+            onChange={(date) => setHireDate(date)}
+            label="Hire Date"
+          />
 
           <FormControl className="form__input">
             <FormControlLabel
@@ -191,20 +290,11 @@ const Form = () => {
           </FormControl>
 
           {!checkboxState && (
-            <FormControl className="form__input">
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
-                  variant="inline"
-                  inputVariant="outlined"
-                  label="Contract Expiry Date"
-                  name="expiryDate"
-                  format="MM/dd/yyyy"
-                  disableToolbar
-                  value={expiryDate}
-                  onChange={(date) => setExpiryDate(date)}
-                />
-              </MuiPickersUtilsProvider>
-            </FormControl>
+            <DatePicker
+              value={expiryDate}
+              onChange={(date) => setExpiryDate(date)}
+              label="Contract Expiry Date"
+            />
           )}
 
           <div className="form__input">
@@ -219,7 +309,7 @@ const Form = () => {
             <Button
               className="submit__btn reset__btn"
               variant="contained"
-              onClick={resetForm}
+              onClick={resetFormHandler}
             >
               Reset
             </Button>

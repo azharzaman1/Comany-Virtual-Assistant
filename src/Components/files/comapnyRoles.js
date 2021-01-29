@@ -16,3 +16,10 @@ export const companyRoles = [
   { value: "computor-operator", name: "Computor Operator" },
   { value: "other", name: "Other" },
 ];
+
+export const tableHeaderCells = [
+  { id: "employee_name", label: "Employee Name" },
+  { id: "employee_email", label: "Email Address (Personal)" },
+  { id: "employee_phone", label: "Phone No (Personal)" },
+  { id: "employee_department", label: "Department" },
+];

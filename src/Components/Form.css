@@ -19,3 +19,7 @@
 .reset__btn {
   margin-left: 1rem !important;
 }
+
+.dropdown__item {
+  font-size: 15px !important;
+}
