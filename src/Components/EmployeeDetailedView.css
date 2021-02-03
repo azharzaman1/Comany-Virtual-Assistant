@@ -1,0 +1,47 @@
+.employeeDetailed__popup {
+  width: 575px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem 1rem;
+}
+
+.employeePopup__DetialsSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.employeePopup__column {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail__entry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0.5rem 0;
+}
+
+.detail__entry > h3 {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.detail__entry > span {
+  font-size: 15px;
+}
+
+.employeePopup__contolsSection {
+  margin-top: 1.65rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.employeePopup__contolsSection > button {
+  margin: 0 1rem;
+  text-transform: inherit;
+  letter-spacing: 0.5px;
+}

@@ -5,6 +5,7 @@ export const employeesSlice = createSlice({
   initialState: {
     employeesList: [],
     employeeToEdit: {},
+    employeeToView: {},
     employeeEditMode: false,
     employeeDepartmentsList: [],
     editedEmployee: {},
@@ -20,6 +21,12 @@ export const employeesSlice = createSlice({
       return {
         ...state,
         employeeToEdit: action.payload,
+      };
+    },
+    SET_EMPLOYEE_TO_VIEW: (state, action) => {
+      return {
+        ...state,
+        employeeToView: action.payload,
       };
     },
     SET_EMPLOYEE_EDIT_MODE: (state, action) => {
@@ -59,12 +66,15 @@ export const {
   SET_EMPLOYEE_DEPARTMENTS_LIST,
   EXPAND_EMPLOYEE_DEPARTMENTS_LIST,
   SET_EDITED_EMPLOYEE,
+  SET_EMPLOYEE_TO_VIEW,
 } = employeesSlice.actions;
 
 export const selectEmployeesList = (state) =>
   state.employeesStore.employeesList;
 export const selectEmployeeToEdit = (state) =>
   state.employeesStore.employeeToEdit;
+export const selectEmployeeToView = (state) =>
+  state.employeesStore.employeeToView;
 export const selectEmployeeEditMode = (state) =>
   state.employeesStore.employeeEditMode;
 export const selectEmployeeDepartments = (state) =>

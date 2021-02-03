@@ -17,7 +17,7 @@ import EmployeeDetailedView from "./EmployeeDetailedView";
 const PageChangeAbleContentSection = () => {
   const dispatch = useDispatch();
   const employeeEditMode = useSelector(selectEmployeeEditMode);
-  const employeeToEdit = useSelector(selectEmployeeToEdit);
+  // const employeeToEdit = useSelector(selectEmployeeToEdit);
   const [openPopup, setOpenPopup] = useState(false);
   const [employeePopupState, setEmployeePopupState] = useState(false);
 
@@ -40,14 +40,18 @@ const PageChangeAbleContentSection = () => {
         icon={<PeopleOutlineTwoTone color="primary" fontSize="large" />}
       />
       <Paper className="formWrapper">
-        <Popup open={openPopup} close={closePopup}>
+        <Popup open={openPopup} close={closePopup} popupTitle="Add Employee">
           <Form setPopupClose={closePopup} />
         </Popup>
         <Table
           setOpenEmployeePopup={setEmployeePopupState}
           setOpenPopup={setOpenPopup}
         />
-        <Popup open={employeePopupState} close={closeEmployeePopupState}>
+        <Popup
+          open={employeePopupState}
+          close={closeEmployeePopupState}
+          popupTitle="Employee Details"
+        >
           <EmployeeDetailedView />
         </Popup>
       </Paper>

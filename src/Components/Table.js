@@ -17,6 +17,7 @@ import {
   selectEmployeesList,
   SET_EMPLOYEE_TO_EDIT,
   SET_EMPLOYEE_EDIT_MODE,
+  SET_EMPLOYEE_TO_VIEW,
   selectEmployeeDepartments,
 } from "../redux/slices/employeesSlice";
 import { tableHeaderCells } from "./files/comapnyRoles";
@@ -136,7 +137,19 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
     setOpenPopup(true);
   };
 
-  const viewEmployeeDetails = (para, id) => {
+  const viewEmployeeDetails = (clickedEmployeeId) => {
+    let employeeToView = employeesList?.find(
+      (employeeInStore) =>
+        employeeInStore.employeeDetails.employeeID == clickedEmployeeId
+    );
+    const employeeToViewId = employeeToView.id;
+
+    dispatch(
+      SET_EMPLOYEE_TO_VIEW({
+        ...employeeToView.employeeDetails,
+        employeeToViewId,
+      })
+    );
     setOpenEmployeePopup(true);
   };
 
@@ -204,7 +217,7 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        viewEmployeeDetails(employeeDetails.employeeID, id); // id=> ln:156
+                        viewEmployeeDetails(employeeDetails.employeeID);
                       }}
                     >
                       <Visibility fontSize="small" />
@@ -214,7 +227,7 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
                       variant="outlined"
                       color="primary"
                       onClick={() => {
-                        editEmployeeAndPushDB(employeeDetails.employeeID, id); // id=> ln:156
+                        editEmployeeAndPushDB(employeeDetails.employeeID);
                       }}
                     >
                       <EditOutlined fontSize="small" />
