@@ -1,14 +1,14 @@
 .table {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
 .table__head > .table__row {
   background-color: #e4e4e4;
+  background-color: #d8deff;
 }
 
 .table__head > .table__row > .table__cell {
   font-weight: 600 !important;
-  color: #5e21ad !important;
 }
 
 .table__body > .table__row > .table__cell {
@@ -20,5 +20,52 @@
   cursor: pointer;
 }
 
-/* .table__row {
-} */
+.table__formInput {
+  width: 85%;
+}
+
+.table__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tableHeader__button {
+  text-transform: inherit !important;
+  padding: 0.36rem 1rem !important;
+}
+
+.popup__header {
+  border-bottom: 1px solid rgb(226, 226, 226) !important;
+  padding: 0.45rem 0 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup__header > h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.popupClose__btn {
+  background-color: #ff99bd52 !important;
+  padding: 4px !important;
+}
+
+.tableRow__actionBtn:nth-child(1) {
+  margin-right: 2.5px !important;
+}
+
+.tableRow__actionBtn:nth-child(2) {
+  margin: 0 2.5px !important;
+}
+
+.tableRow__actionBtn:nth-child(3) {
+  margin-left: 2.5px !important;
+}
+
+.noEmployees__tagline {
+  font-size: 17px;
+  text-align: center;
+  margin: 1.75rem 0 0.8rem;
+}

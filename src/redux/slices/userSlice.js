@@ -5,9 +5,11 @@ export const userSlice = createSlice({
   initialState: {
     currentUser: null,
     loggedOutRecently: false,
+    currentUserRole: "individual__user",
+    currentUserInDB: "",
   },
   reducers: {
-    SETUSER: (state, action) => {
+    SET_USER: (state, action) => {
       return {
         ...state,
         currentUser: action.payload,
@@ -15,20 +17,39 @@ export const userSlice = createSlice({
       };
     },
 
-    LOGOUT: (state, action) => {
+    SET_CURRENT_USER_IN_DB: (state, action) => {
       return {
         ...state,
-        currentUser: action.payload,
+        currentUserInDB: action.payload,
+      };
+    },
+
+    LOGED_OUT_RECENTLY: (state, action) => {
+      return {
+        ...state,
         loggedOutRecently: true,
+      };
+    },
+    SET_USER_ROLE: (state, action) => {
+      return {
+        ...state,
+        currentUserRole: action.payload,
       };
     },
   },
 });
 
-export const { SETUSER, LOGOUT } = userSlice.actions;
+export const {
+  SET_USER,
+  LOGED_OUT_RECENTLY,
+  SET_USER_ROLE,
+  SET_CURRENT_USER_IN_DB,
+} = userSlice.actions;
 
 export const selectUser = (state) => state.userStore.currentUser;
 export const selectLoggedOutState = (state) =>
   state.userStore.loggedOutRecently;
+export const selectCurrentUserRole = (state) => state.userStore.currentUserRole;
+export const selectCurrentUserInDB = (state) => state.userStore.currentUserInDB;
 
 export default userSlice.reducer;

@@ -15,50 +15,107 @@ import {
   TextField,
 } from "@material-ui/core";
 import "./Form.css";
-import { companyRoles } from "./files/comapnyRoles";
-import { validateEmail, resetForm } from "./files/FormValidation";
-import { getFromLocalStorage, setToLocalStorage } from "./files/LocalStorage";
+import { validateEmail } from "./files/FormValidation";
+import { setToLocalStorage } from "./files/LocalStorage";
 import DatePicker from "./DatePicker";
-import { useSelector } from "react-redux";
-import { selectEmployeesList } from "../redux/slices/employeesSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectEmployeeDepartments,
+  selectEmployeeEditMode,
+  selectEmployeesList,
+  selectEmployeeToEdit,
+  EXPAND_EMPLOYEE_DEPARTMENTS_LIST,
+  SET_EDITED_EMPLOYEE,
+} from "../redux/slices/employeesSlice";
+import { db } from "../Files/firebase";
+import {
+  selectCurrentUserInDB,
+  selectCurrentUserRole,
+  selectUser,
+} from "../redux/slices/userSlice";
+import { collectionName } from "./files/utils";
+import { toDate } from "date-fns";
+import { useStateValue } from "../context/StateProvider";
 
-const Form = () => {
+const Form = ({ setPopupClose }) => {
+  const dispatch = useDispatch();
+  const companyRoles = useSelector(selectEmployeeDepartments);
+  const currentUser = useSelector(selectUser);
   const employeesList = useSelector(selectEmployeesList);
-  const [fullName, setFullName] = useState("");
+  const currentUserInDB = useSelector(selectCurrentUserInDB);
+  const employeeEditMode = useSelector(selectEmployeeEditMode);
+  const employeeToEdit = useSelector(selectEmployeeToEdit);
+  const [fullName, setFullName] = useState(
+    employeeEditMode ? employeeToEdit?.employeeName : ""
+  );
   const [nameError, setNameError] = useState(false);
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(
+    employeeEditMode ? employeeToEdit?.employeeEmail : ""
+  );
   const [emailError, setEmailError] = useState(false);
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(
+    employeeEditMode ? employeeToEdit?.employeePhone : ""
+  );
   const [phoneError, setPhoneError] = useState(false);
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState(
+    employeeEditMode ? employeeToEdit?.employeeCity : ""
+  );
   const [cityError, setCityError] = useState(false);
-  const [pay, setPay] = useState("");
-  const [gender, setGender] = useState("male");
-  const [role, setRole] = useState("Select");
+  const [pay, setPay] = useState(
+    employeeEditMode ? employeeToEdit?.employeePayPerYear : ""
+  );
+  const [gender, setGender] = useState(
+    employeeEditMode ? employeeToEdit?.employeeGender : "male"
+  );
+  const [role, setRole] = useState(
+    employeeEditMode ? employeeToEdit?.employeeDepartment : "Select"
+  );
   const [roleError, setRoleError] = useState(false);
   const [newRole, setNewRole] = useState("");
-  const [hireDate, setHireDate] = useState(new Date());
+  const [hireDate, setHireDate] = useState(
+    employeeEditMode
+      ? new Date(employeeToEdit?.employeeHiredDate?.toDate())
+      : new Date()
+  );
   const [hireDateError, setHireDateError] = useState(false);
-  const [expiryDate, setExpiryDate] = useState(new Date());
-  const [checkboxState, setCheckboxState] = useState(false);
-  const [companyRolesList, setCompanyRolesList] = useState(companyRoles);
+  const [expiryDate, setExpiryDate] = useState(
+    employeeEditMode
+      ? new Date(employeeToEdit?.employeeContractExpiry.toDate())
+      : new Date()
+  );
+  const [checkboxState, setCheckboxState] = useState(
+    employeeEditMode ? employeeToEdit?.isPermanent : false
+  );
 
-  const addNewRoleToList = () => {
-    console.log("Want to add, but no experinece", {
-      value: newRole.trim().toLowerCase(),
-      name: newRole,
-    });
-
-    setCompanyRolesList(
-      companyRolesList.splice(companyRolesList.length - 1, 0, {
+  const addNewRoleToList = async () => {
+    dispatch(
+      EXPAND_EMPLOYEE_DEPARTMENTS_LIST({
         value: newRole.toLowerCase(),
         name: newRole,
       })
     );
+    if (currentUserInDB) {
+      await db
+        .collection(currentUserInDB.userData.usersCat)
+        .doc(currentUser?.uid)
+        .set(
+          {
+            uniqueDepartmentsList: [
+              ...companyRoles.filter(
+                (department) => department.name !== "Other"
+              ),
+              {
+                value: newRole.toLowerCase(),
+                name: newRole,
+                id: companyRoles?.length,
+              },
+            ],
+          },
+          { merge: true }
+        );
 
-    setRole(newRole.toLowerCase());
-
-    console.log([]);
+      setRole(newRole.toLowerCase());
+    }
   };
 
   const submitForm = async () => {
@@ -67,32 +124,26 @@ const Form = () => {
     } else {
       setNameError(false);
     }
-
     if (validateEmail(email)) {
-      // if email valid => return true
       setEmailError(false);
     } else {
       setEmailError(true);
     }
-
     if (phone.length >= 10) {
       setPhoneError(false);
     } else {
       setPhoneError(true);
     }
-
     if (city === "") {
       setCityError(true);
     } else {
       setCityError(false);
     }
-
     if (role === "Select") {
       setRoleError(true);
     } else {
       setRoleError(false);
     }
-
     if (hireDate === new Date()) {
       setHireDateError(true);
     } else {
@@ -109,16 +160,14 @@ const Form = () => {
     ) {
       alert("You Employee could not be added, please check details again!");
     } else {
-      await setEmployee();
+      await addOrUpdateEmployee();
       resetFormHandler();
+      setPopupClose(false);
     }
   };
 
-  const setEmployee = () => {
-    console.log("Wokring");
-    const employeesList = getFromLocalStorage("employeesList");
-
-    const newEmploye = {
+  const addOrUpdateEmployee = async () => {
+    const employeeToAddOrUpdate = {
       employeeID: new Date(),
       employeeName: fullName,
       employeeEmail: email,
@@ -131,12 +180,37 @@ const Form = () => {
       isPermanent: checkboxState,
       employeeContractExpiry: expiryDate,
     };
+    if (!employeeEditMode) {
+      await db
+        .collection(currentUserInDB?.userData.usersCat)
+        .doc(currentUser?.uid)
+        .collection("employeesList")
+        .add(employeeToAddOrUpdate);
+    } else {
+      // This code will edit and push employee to DataBase
+      dispatch(SET_EDITED_EMPLOYEE(employeeToAddOrUpdate));
+      db.collection(currentUserInDB?.userData.usersCat)
+        .doc(currentUser?.uid)
+        .collection("employeesList")
+        .doc(employeeToEdit?.employeeToEditId)
+        .set(employeeToAddOrUpdate, { merge: true })
+        .then(() => {
+          alert("Employee was edited successfully");
+        })
+        .catch((error) => alert(error));
+    }
 
-    employeesList.push(newEmploye);
-
-    console.log(employeesList);
-
-    setToLocalStorage("employeesList", employeesList);
+    if (!employeeEditMode) {
+      await db
+        .collection(currentUserInDB?.userData.usersCat)
+        .doc(currentUser?.uid)
+        .set(
+          {
+            noOfEmployeesAdded: employeesList?.length + 1,
+          },
+          { merge: true }
+        );
+    }
   };
 
   const resetFormHandler = () => {
@@ -236,7 +310,7 @@ const Form = () => {
               className="dropdown__department"
             >
               {companyRoles &&
-                companyRoles.map((role) => (
+                companyRoles?.map((role) => (
                   <MenuItem
                     className="dropdown__item"
                     key={role.value}

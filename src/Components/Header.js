@@ -15,8 +15,19 @@ import {
   Search,
 } from "@material-ui/icons";
 import "./Header.css";
+import { auth } from "../Files/firebase";
+import { selectUser, LOGED_OUT_RECENTLY } from "../redux/slices/userSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectUser);
+
+  const signoutHandler = () => {
+    auth.signOut();
+    dispatch(LOGED_OUT_RECENTLY);
+  };
+
   return (
     <AppBar className="app__header" position="static">
       <Toolbar>
@@ -41,7 +52,10 @@ const Header = () => {
                 <ChatBubbleOutline className="header__icon" fontSize="small" />
               </Badge>
             </IconButton>
-            <IconButton color="secondary">
+            <IconButton
+              onClick={signoutHandler}
+              color={currentUser ? "secondary" : "primary"}
+            >
               <PowerSettingsNew className="header__icon" fontSize="small" />
             </IconButton>
           </Grid>
