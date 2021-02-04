@@ -52,6 +52,7 @@ const Signup = () => {
 
   const signupHandler = async (e) => {
     e.preventDefault();
+
     if (fullName === "") {
       setFullNameErr(true);
     }

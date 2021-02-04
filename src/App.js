@@ -12,7 +12,6 @@ import {
   SET_EMPLOYEE_DEPARTMENTS_LIST,
 } from "./redux/slices/employeesSlice";
 import { auth, db } from "./Files/firebase";
-import { collectionName } from "./Components/files/utils";
 import {
   selectCurrentUserRole,
   SET_USER,
@@ -33,13 +32,15 @@ import {
 } from "react-router-dom";
 import Signup from "./Authentication/Signup";
 import Signin from "./Authentication/Signin";
+import GradientLoader from "./Components/loading/GradientLoader";
+import { selectLoadingState, setLoading } from "./redux/slices/generalSlice";
+import Popup from "./Components/Popup";
 
 const App = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const currentUserRole = useSelector(selectCurrentUserRole);
+  const loadingState = useSelector(selectLoadingState);
   const loggedOutRecently = useSelector(selectLoggedOutState);
-  const employeesList = useSelector(selectEmployeesList);
   const currentUserInDB = useSelector(selectCurrentUserInDB);
   const [redirect, setRedirect] = useState();
   const [allUsers, setAllUsers] = useState([]);
@@ -150,6 +151,9 @@ const App = () => {
             emailVerified: authUser?.emailVerified,
           })
         );
+        setTimeout(() => {
+          dispatch(setLoading(false));
+        }, 1500);
         localStorage.setItem("userID", authUser?.uid);
       } else {
         dispatch(SET_USER(null));
@@ -170,6 +174,9 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="app">
+        <Popup open={loadingState} loadingPopup>
+          <GradientLoader />
+        </Popup>
         <Router>
           {redirect}
           <Switch>

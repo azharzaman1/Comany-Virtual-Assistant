@@ -1,0 +1,67 @@
+.loading__sec {
+  width: 250px;
+  height: 230px;
+  background-color: #253053;
+  background-color: #240229;
+  background-color: white;
+  background-color: #1f3785;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  position: absolute;
+  overflow: hidden;
+  border: 3px solid #240229;
+  border: 3px solid #253053;
+  border: 3px solid white;
+  border: 3px solid #1f3785;
+
+  box-shadow: -1.5px -1.5px 5px rgba(255, 255, 255, 0.1),
+    5px 5px 7px rgba(0, 0, 0, 0.3),
+    inset -1.5px -1.5px 5px rgba(255, 255, 255, 0.2),
+    inset 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.loader:before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background-color: #240229;
+  background-color: #253053;
+  background-color: white;
+  background-color: #1f3785;
+  border-radius: 50%;
+  border: 2px solid #240229;
+  border: 2px solid #253053;
+  border: 2px solid white;
+  border: 2px solid #1f3785;
+
+  box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.2),
+    inset 3px 3px 5px rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.loader > span {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+  filter: blur(20px);
+  animation: a1 0.5s linear infinite;
+}
+
+@keyframes a1 {
+  to {
+    transform: rotate(360deg);
+  }
+}

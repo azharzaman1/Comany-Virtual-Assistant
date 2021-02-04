@@ -26,7 +26,6 @@ import {
   Add,
   Close,
   EditOutlined,
-  PanoramaFishEye,
   Search,
   Visibility,
   Watch,
@@ -38,7 +37,10 @@ import {
   selectCurrentUserRole,
   selectUser,
 } from "../redux/slices/userSlice";
-import { useStateValue } from "../context/StateProvider";
+import {
+  SET_ADD_EMPLOYEE_POPUP,
+  SET_VIEW_EMPLOYEE_POPUP,
+} from "../redux/slices/generalSlice";
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -48,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
+const TableComponent = () => {
   const dispatch = useDispatch();
   const currentUserInDB = useSelector(selectCurrentUserInDB);
   const currentUser = useSelector(selectUser);
@@ -134,7 +136,7 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
       })
     );
     dispatch(SET_EMPLOYEE_EDIT_MODE(true));
-    setOpenPopup(true);
+    dispatch(SET_ADD_EMPLOYEE_POPUP(true));
   };
 
   const viewEmployeeDetails = (clickedEmployeeId) => {
@@ -150,7 +152,8 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
         employeeToViewId,
       })
     );
-    setOpenEmployeePopup(true);
+
+    dispatch(SET_VIEW_EMPLOYEE_POPUP(true));
   };
 
   return (
@@ -174,7 +177,7 @@ const TableComponent = ({ setOpenPopup, setOpenEmployeePopup }) => {
           color="secondary"
           variant="outlined"
           startIcon={<Add />}
-          onClick={() => setOpenPopup(true)}
+          onClick={() => dispatch(SET_ADD_EMPLOYEE_POPUP(true))}
         >
           Add New
         </Button>

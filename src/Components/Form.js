@@ -36,6 +36,7 @@ import {
 import { collectionName } from "./files/utils";
 import { toDate } from "date-fns";
 import { useStateValue } from "../context/StateProvider";
+import { SET_ADD_EMPLOYEE_POPUP } from "../redux/slices/generalSlice";
 
 const Form = ({ setPopupClose }) => {
   const dispatch = useDispatch();
@@ -79,13 +80,15 @@ const Form = ({ setPopupClose }) => {
   );
   const [hireDateError, setHireDateError] = useState(false);
   const [expiryDate, setExpiryDate] = useState(
-    employeeEditMode
+    employeeEditMode && employeeToEdit?.employeeContractExpiry
       ? new Date(employeeToEdit?.employeeContractExpiry.toDate())
       : new Date()
   );
   const [checkboxState, setCheckboxState] = useState(
     employeeEditMode ? employeeToEdit?.isPermanent : false
   );
+
+  console.log("Hellllllllllllllllll", employeeToEdit);
 
   const addNewRoleToList = async () => {
     dispatch(
@@ -162,7 +165,7 @@ const Form = ({ setPopupClose }) => {
     } else {
       await addOrUpdateEmployee();
       resetFormHandler();
-      setPopupClose(false);
+      dispatch(SET_ADD_EMPLOYEE_POPUP(false));
     }
   };
 
@@ -178,7 +181,7 @@ const Form = ({ setPopupClose }) => {
       employeeDepartment: role,
       employeeHiredDate: hireDate,
       isPermanent: checkboxState,
-      employeeContractExpiry: expiryDate,
+      employeeContractExpiry: checkboxState ? null : expiryDate,
     };
     if (!employeeEditMode) {
       await db
@@ -194,9 +197,6 @@ const Form = ({ setPopupClose }) => {
         .collection("employeesList")
         .doc(employeeToEdit?.employeeToEditId)
         .set(employeeToAddOrUpdate, { merge: true })
-        .then(() => {
-          alert("Employee was edited successfully");
-        })
         .catch((error) => alert(error));
     }
 

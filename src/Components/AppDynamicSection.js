@@ -13,24 +13,18 @@ import {
   SET_EMPLOYEE_EDIT_MODE,
 } from "../redux/slices/employeesSlice";
 import EmployeeDetailedView from "./EmployeeDetailedView";
+import {
+  selectAddEmployeePopupState,
+  selectEmployeeDetailedViewState,
+} from "../redux/slices/generalSlice";
 
 const PageChangeAbleContentSection = () => {
   const dispatch = useDispatch();
   const employeeEditMode = useSelector(selectEmployeeEditMode);
-  // const employeeToEdit = useSelector(selectEmployeeToEdit);
-  const [openPopup, setOpenPopup] = useState(false);
-  const [employeePopupState, setEmployeePopupState] = useState(false);
-
-  const closePopup = () => {
-    setOpenPopup(false);
-    if (employeeEditMode) {
-      dispatch(SET_EMPLOYEE_EDIT_MODE(false));
-    }
-  };
-
-  const closeEmployeePopupState = () => {
-    setEmployeePopupState(false);
-  };
+  const addEmployeePopupState = useSelector(selectAddEmployeePopupState);
+  const employeeDetailedViewState = useSelector(
+    selectEmployeeDetailedViewState
+  );
 
   return (
     <>
@@ -40,18 +34,11 @@ const PageChangeAbleContentSection = () => {
         icon={<PeopleOutlineTwoTone color="primary" fontSize="large" />}
       />
       <Paper className="formWrapper">
-        <Popup open={openPopup} close={closePopup} popupTitle="Add Employee">
-          <Form setPopupClose={closePopup} />
+        <Popup open={addEmployeePopupState} popupTitle="Add Employee">
+          <Form />
         </Popup>
-        <Table
-          setOpenEmployeePopup={setEmployeePopupState}
-          setOpenPopup={setOpenPopup}
-        />
-        <Popup
-          open={employeePopupState}
-          close={closeEmployeePopupState}
-          popupTitle="Employee Details"
-        >
+        <Table />
+        <Popup open={employeeDetailedViewState} popupTitle="Employee Details">
           <EmployeeDetailedView />
         </Popup>
       </Paper>

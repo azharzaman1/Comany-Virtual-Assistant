@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@material-ui/core";
 import "./EmployeeDetailedView.css";
-import { useSelector } from "react-redux";
-import { selectEmployeeToView } from "../redux/slices/employeesSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  selectEmployeeToView,
+  SET_EMPLOYEE_EDIT_MODE,
+  SET_EMPLOYEE_TO_EDIT,
+} from "../redux/slices/employeesSlice";
+import { selectCurrentUserInDB, selectUser } from "../redux/slices/userSlice";
+import {
+  SET_VIEW_EMPLOYEE_POPUP,
+  SET_ADD_EMPLOYEE_POPUP,
+} from "../redux/slices/generalSlice";
+import { db } from "../Files/firebase";
 
 const EmployeeDetailedView = () => {
+  const dispatch = useDispatch();
   const employeeToView = useSelector(selectEmployeeToView);
+  const currentUserInDB = useSelector(selectCurrentUserInDB);
+  const currentUser = useSelector(selectUser);
 
-  console.log(employeeToView);
-  // console.log(employeeToView);
-  // console.log(new Date(employeeToView.employeeHiredDate?.toData()));
+  const deleteEmployeeFromDB = async (employeeBeingViewedId) => {
+    console.log(employeeBeingViewedId);
+    if (currentUserInDB) {
+      await db
+        .collection(currentUserInDB?.userData.usersCat)
+        .doc(currentUser?.uid)
+        .collection("employeesList")
+        .doc(employeeBeingViewedId)
+        .delete()
+        .catch((error) => {
+          alert(error);
+        });
+      dispatch(SET_VIEW_EMPLOYEE_POPUP(false));
+    }
+  };
+
+  const editEmployeeAndPushDB = (employeeBeingViewed) => {
+    const employeeToEditId = employeeBeingViewed?.employeeToViewId;
+
+    dispatch(
+      SET_EMPLOYEE_TO_EDIT({
+        ...employeeBeingViewed,
+        employeeToEditId: employeeToEditId,
+      })
+    );
+    dispatch(SET_VIEW_EMPLOYEE_POPUP(false));
+    dispatch(SET_EMPLOYEE_EDIT_MODE(true));
+    dispatch(SET_ADD_EMPLOYEE_POPUP(true));
+  };
 
   return (
     <div className="employeeDetailed__popup">
@@ -17,8 +56,21 @@ const EmployeeDetailedView = () => {
         <div className="employeePopup__column">
           <DetailEle title="Name" info={employeeToView?.employeeName} />
           <DetailEle title="Email" info={employeeToView?.employeeEmail} />
-          <DetailEle title="Hire Date" info="25 Oct, 2025" />
-          <DetailEle title="Contract Expiry Date" info="25 Oct, 2025" />
+          <DetailEle
+            row2ndEntry
+            title="Job Nature"
+            info={
+              employeeToView?.isPermanent
+                ? "Permanent Position"
+                : "Contract-Based"
+            }
+          />
+          <DetailEle
+            title="Hire Date"
+            info={new Date(
+              employeeToView?.employeeHiredDate?.toDate()
+            ).toLocaleDateString()}
+          />
         </div>
         <div className="employeePopup__column">
           <DetailEle
@@ -33,25 +85,36 @@ const EmployeeDetailedView = () => {
           />
           <DetailEle
             row2ndEntry
-            title="Job Nature"
-            info={
-              employeeToView?.isPermanent
-                ? "Permanent Position"
-                : "Contract-Based"
-            }
-          />
-          <DetailEle
-            row2ndEntry
             title="Current Pay"
             info={`$${employeeToView?.employeePayPerYear}/year`}
           />
+          {employeeToView?.employeeContractExpiry && (
+            <DetailEle
+              title="Contract Expiry Date"
+              info={new Date(
+                employeeToView?.employeeContractExpiry?.toDate()
+              ).toLocaleDateString()}
+            />
+          )}
         </div>
       </div>
       <div className="employeePopup__contolsSection">
-        <Button variant="contained" color="primary">
+        <Button
+          onClick={() => {
+            editEmployeeAndPushDB(employeeToView);
+          }}
+          variant="contained"
+          color="primary"
+        >
           Edit
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button
+          onClick={() => {
+            deleteEmployeeFromDB(employeeToView?.employeeToViewId);
+          }}
+          variant="contained"
+          color="secondary"
+        >
           Delete
         </Button>
       </div>
