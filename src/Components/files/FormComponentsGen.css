@@ -1,0 +1,21 @@
+.avatarUpload__element {
+  width: 80%;
+  background-color: lavender !important;
+  padding: 1rem 0;
+  margin-bottom: 1.65rem;
+  margin-top: 0.6rem;
+}
+
+.avatarUpload__element > .avatarEle {
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.fileAction__btns {
+  display: flex !important;
+  flex-direction: row !important;
+}
+
+.fileAction__btns > button {
+  margin: 1rem 0.15rem 0;
+}

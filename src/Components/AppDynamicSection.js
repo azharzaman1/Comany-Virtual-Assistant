@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   selectEmployeeEditMode,
   selectEmployeeToEdit,
-  SET_EMPLOYEE_EDIT_MODE,
+  setEmployeeEditMode,
 } from "../redux/slices/employeesSlice";
 import EmployeeDetailedView from "./EmployeeDetailedView";
 import {
@@ -19,7 +19,6 @@ import {
 } from "../redux/slices/generalSlice";
 
 const PageChangeAbleContentSection = () => {
-  const dispatch = useDispatch();
   const employeeEditMode = useSelector(selectEmployeeEditMode);
   const addEmployeePopupState = useSelector(selectAddEmployeePopupState);
   const employeeDetailedViewState = useSelector(

@@ -7,15 +7,15 @@ import { theme } from "./Files/MuiTheme";
 import AppDynamicSection from "./Components/AppDynamicSection";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  selectEmployeesList,
   SET_EMPLOYEES_LIST,
   SET_EMPLOYEE_DEPARTMENTS_LIST,
 } from "./redux/slices/employeesSlice";
 import { auth, db } from "./Files/firebase";
 import {
-  selectCurrentUserRole,
   SET_USER,
+  SET_USER_REF,
   selectUser,
+  selectUserRef,
   selectLoggedOutState,
   SET_CURRENT_USER_IN_DB,
   selectCurrentUserInDB,
@@ -24,38 +24,24 @@ import {
   getFromLocalStorage,
   setToLocalStorage,
 } from "./Components/files/LocalStorage";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Signup from "./Authentication/Signup";
 import Signin from "./Authentication/Signin";
 import GradientLoader from "./Components/loading/GradientLoader";
 import { selectLoadingState, setLoading } from "./redux/slices/generalSlice";
 import Popup from "./Components/Popup";
+import GoogleAuthPhaseTwo from "./Authentication/GoogleSignupPhaseTwo";
 
 const App = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
+  const userRef = useSelector(selectUserRef);
   const loadingState = useSelector(selectLoadingState);
   const loggedOutRecently = useSelector(selectLoggedOutState);
   const currentUserInDB = useSelector(selectCurrentUserInDB);
-  const [redirect, setRedirect] = useState();
   const [allUsers, setAllUsers] = useState([]);
 
-  useEffect(() => {
-    if (currentUser) {
-      return setRedirect(<Redirect to="/" />);
-    } else if (!loggedOutRecently) {
-      return setRedirect(<Redirect to="/auth/registration" />);
-    } else if (!currentUser && loggedOutRecently) {
-      return setRedirect(<Redirect to="/auth/signin" />);
-    } else {
-      return null;
-    }
-  }, [currentUser]);
+  // Fetch all users from DB
 
   useEffect(() => {
     const subscribe = db.collection("all_users").onSnapshot((snapshot) =>
@@ -79,9 +65,20 @@ const App = () => {
     dispatch(SET_CURRENT_USER_IN_DB(userInDB));
   }
 
+  // Set userRef to store
+
+  // useEffect(() => {
+  //   if (currentUserInDB) {
+  //     dispatch(SET_USER_REF(`${currentUserInDB?.userData?.userRole}s`));
+  //     setToLocalStorage("userRef", `${currentUserInDB?.userData?.userRole}s`);
+  //   }
+  // }, [currentUserInDB]);
+
+  // Fetch and Set User Private Employee Departments List to store
+
   useEffect(() => {
-    if (currentUserInDB) {
-      db.collection(currentUserInDB.userData.usersCat)
+    if (userRef || getFromLocalStorage("userRef")) {
+      db.collection(userRef ? userRef : getFromLocalStorage("userRef"))
         .doc(currentUser?.uid)
         .get()
         .then((doc) => {
@@ -99,44 +96,49 @@ const App = () => {
           }
         });
     }
+
     const sortData = (data) => {
       const sortedData = [...data];
       return sortedData.sort((a, b) => (a.id > b.id ? 1 : -1));
     };
   }, [currentUser, currentUserInDB]);
 
+  // Fetch and Set Employee List to store
+
   useEffect(() => {
     let subscribe = () => {};
     if (currentUserInDB) {
-      subscribe = db
-        .collection(currentUserInDB.userData.usersCat)
-        .doc(currentUser?.uid)
-        .collection("employeesList")
-        .onSnapshot((snapshot) => {
-          dispatch(
-            SET_EMPLOYEES_LIST(
-              snapshot.docs.map((doc) => ({
-                id: doc.id,
-                employeeDetails: doc.data(),
-              }))
-            )
-          );
+      const DocRef = db
+        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+        .doc(currentUser?.uid);
 
-          if (!getFromLocalStorage("employeesList")) {
-            setToLocalStorage(
-              "employeesList",
-              snapshot.docs.map((doc) => ({
-                id: doc.id,
-                employeeDetails: doc.data(),
-              }))
-            );
-          }
-        });
+      subscribe = DocRef.collection("employeesList").onSnapshot((snapshot) => {
+        dispatch(
+          SET_EMPLOYEES_LIST(
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              employeeDetails: doc.data(),
+            }))
+          )
+        );
+
+        if (!getFromLocalStorage("employeesList")) {
+          setToLocalStorage(
+            "employeesList",
+            snapshot.docs.map((doc) => ({
+              id: doc.id,
+              employeeDetails: doc.data(),
+            }))
+          );
+        }
+      });
     }
     return () => {
       subscribe();
     };
   }, [currentUserInDB]);
+
+  // Persist User in Store and Browser
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
@@ -154,7 +156,7 @@ const App = () => {
         setTimeout(() => {
           dispatch(setLoading(false));
         }, 1500);
-        localStorage.setItem("userID", authUser?.uid);
+        setToLocalStorage("userID", authUser?.uid);
       } else {
         dispatch(SET_USER(null));
       }
@@ -165,20 +167,21 @@ const App = () => {
     };
   }, []);
 
+  // Console Browser
+
   useEffect(() => {
     if (currentUser) {
-      console.log("CURRENT LOGGED IN USER >>>>", currentUser);
+      console.log("Current logged in User >>>>", currentUser);
     }
   }, [currentUser]);
 
   return (
     <ThemeProvider theme={theme}>
       <div className="app">
-        <Popup open={loadingState} loadingPopup>
+        {/* <Popup open={loadingState} loadingPopup>
           <GradientLoader />
-        </Popup>
+        </Popup> */}
         <Router>
-          {redirect}
           <Switch>
             <Route exact path="/">
               <SideMenu />
@@ -186,6 +189,10 @@ const App = () => {
                 <Header />
                 <AppDynamicSection />
               </div>
+            </Route>
+
+            <Route path="/auth/registration/google/phase-two">
+              <GoogleAuthPhaseTwo />
             </Route>
             <Route path="/auth/registration">
               <Signup />

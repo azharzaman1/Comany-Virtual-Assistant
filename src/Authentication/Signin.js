@@ -7,7 +7,6 @@ import { validateEmail } from "../Components/files/FormValidation";
 import { Link, useHistory } from "react-router-dom";
 
 const Signin = () => {
-  const [userRole, setUserRole] = useState("individual__user");
   const [email, setEmail] = useState("");
   const [emailErr, setEmailErr] = useState(false);
   const [password, setPassword] = useState("");

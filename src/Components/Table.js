@@ -36,11 +36,13 @@ import {
   selectCurrentUserInDB,
   selectCurrentUserRole,
   selectUser,
+  selectUserRef,
 } from "../redux/slices/userSlice";
 import {
   SET_ADD_EMPLOYEE_POPUP,
   SET_VIEW_EMPLOYEE_POPUP,
 } from "../redux/slices/generalSlice";
+import { getFromLocalStorage } from "./files/LocalStorage";
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -52,8 +54,10 @@ const useStyles = makeStyles((theme) => ({
 
 const TableComponent = () => {
   const dispatch = useDispatch();
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
   const currentUser = useSelector(selectUser);
+  const userRef = useSelector(selectUserRef);
+  const currentUserInDB = useSelector(selectCurrentUserInDB);
+
   const currentUserRole = useSelector(selectCurrentUserRole);
   const employeesList = useSelector(selectEmployeesList);
   const companyRoles = useSelector(selectEmployeeDepartments);
@@ -101,7 +105,7 @@ const TableComponent = () => {
     let subscribe = () => {};
     if (currentUserInDB) {
       subscribe = db
-        .collection(currentUserInDB.userData.usersCat)
+        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
         .doc(currentUser?.uid)
         .collection("employeesList")
         .doc(

@@ -16,7 +16,7 @@ import {
 } from "@material-ui/core";
 import "./Form.css";
 import { validateEmail } from "./files/FormValidation";
-import { setToLocalStorage } from "./files/LocalStorage";
+import { getFromLocalStorage, setToLocalStorage } from "./files/LocalStorage";
 import DatePicker from "./DatePicker";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -30,18 +30,17 @@ import {
 import { db } from "../Files/firebase";
 import {
   selectCurrentUserInDB,
-  selectCurrentUserRole,
   selectUser,
+  selectUserRef,
 } from "../redux/slices/userSlice";
-import { collectionName } from "./files/utils";
-import { toDate } from "date-fns";
-import { useStateValue } from "../context/StateProvider";
 import { SET_ADD_EMPLOYEE_POPUP } from "../redux/slices/generalSlice";
+import firebase from "firebase";
 
-const Form = ({ setPopupClose }) => {
+const Form = () => {
   const dispatch = useDispatch();
   const companyRoles = useSelector(selectEmployeeDepartments);
   const currentUser = useSelector(selectUser);
+  const userRef = useSelector(selectUserRef);
   const employeesList = useSelector(selectEmployeesList);
   const currentUserInDB = useSelector(selectCurrentUserInDB);
   const employeeEditMode = useSelector(selectEmployeeEditMode);
@@ -88,8 +87,6 @@ const Form = ({ setPopupClose }) => {
     employeeEditMode ? employeeToEdit?.isPermanent : false
   );
 
-  console.log("Hellllllllllllllllll", employeeToEdit);
-
   const addNewRoleToList = async () => {
     dispatch(
       EXPAND_EMPLOYEE_DEPARTMENTS_LIST({
@@ -99,7 +96,7 @@ const Form = ({ setPopupClose }) => {
     );
     if (currentUserInDB) {
       await db
-        .collection(currentUserInDB.userData.usersCat)
+        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
         .doc(currentUser?.uid)
         .set(
           {
@@ -182,34 +179,31 @@ const Form = ({ setPopupClose }) => {
       employeeHiredDate: hireDate,
       isPermanent: checkboxState,
       employeeContractExpiry: checkboxState ? null : expiryDate,
+      addedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
+
+    const DocRef = db
+      .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+      .doc(currentUser?.uid);
+
     if (!employeeEditMode) {
-      await db
-        .collection(currentUserInDB?.userData.usersCat)
-        .doc(currentUser?.uid)
-        .collection("employeesList")
-        .add(employeeToAddOrUpdate);
+      await DocRef.collection("employeesList").add(employeeToAddOrUpdate);
     } else {
       // This code will edit and push employee to DataBase
-      dispatch(SET_EDITED_EMPLOYEE(employeeToAddOrUpdate));
-      db.collection(currentUserInDB?.userData.usersCat)
-        .doc(currentUser?.uid)
-        .collection("employeesList")
+      DocRef.collection("employeesList")
         .doc(employeeToEdit?.employeeToEditId)
         .set(employeeToAddOrUpdate, { merge: true })
         .catch((error) => alert(error));
+      dispatch(SET_EDITED_EMPLOYEE(employeeToAddOrUpdate));
     }
 
     if (!employeeEditMode) {
-      await db
-        .collection(currentUserInDB?.userData.usersCat)
-        .doc(currentUser?.uid)
-        .set(
-          {
-            noOfEmployeesAdded: employeesList?.length + 1,
-          },
-          { merge: true }
-        );
+      await DocRef.set(
+        {
+          noOfEmployeesAdded: employeesList?.length + 1,
+        },
+        { merge: true }
+      );
     }
   };
 

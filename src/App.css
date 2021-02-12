@@ -23,12 +23,12 @@ body * {
 
 .flexRow {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; /* I know no need to mention */
 }
 
 .flexColumn {
   display: flex;
-  flex-direction: row; /* I know no need to mention */
+  flex-direction: column;
 }
 
 .evenly {
@@ -53,6 +53,10 @@ body * {
 
 .pointer {
   cursor: pointer;
+}
+
+.mar-0-auto {
+  margin: 0 auto !important;
 }
 
 a {
@@ -97,4 +101,17 @@ h5 {
 
 .app__changeableContent {
   flex: 0.82;
+}
+
+.absc-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.absr-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
