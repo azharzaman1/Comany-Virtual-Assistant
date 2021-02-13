@@ -4,27 +4,32 @@ import "./EmployeeDetailedView.css";
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectEmployeeToView,
-  SET_EMPLOYEE_EDIT_MODE,
-  SET_EMPLOYEE_TO_EDIT,
+  setEmployeeEditMode,
+  setEmployeeToEdit,
 } from "../redux/slices/employeesSlice";
-import { selectCurrentUserInDB, selectUser } from "../redux/slices/userSlice";
 import {
-  SET_VIEW_EMPLOYEE_POPUP,
-  SET_ADD_EMPLOYEE_POPUP,
+  selectCurrentUserDBDetails,
+  selectUser,
+  selectUserCollec,
+} from "../redux/slices/userSlice";
+import {
+  viewEmployeePopup,
+  addNewEmployeePopup,
 } from "../redux/slices/generalSlice";
 import { db } from "../Files/firebase";
 
 const EmployeeDetailedView = () => {
   const dispatch = useDispatch();
-  const employeeToView = useSelector(selectEmployeeToView);
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
   const currentUser = useSelector(selectUser);
+  const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
+  const userCollection = useSelector(selectUserCollec);
+  const employeeToView = useSelector(selectEmployeeToView);
 
   const deleteEmployeeFromDB = async (employeeBeingViewedId) => {
     console.log(employeeBeingViewedId);
-    if (currentUserInDB) {
+    if (currentUserDBDetails) {
       await db
-        .collection(currentUserInDB?.userData.usersCat)
+        .collection(userCollection)
         .doc(currentUser?.uid)
         .collection("employeesList")
         .doc(employeeBeingViewedId)
@@ -32,7 +37,7 @@ const EmployeeDetailedView = () => {
         .catch((error) => {
           alert(error);
         });
-      dispatch(SET_VIEW_EMPLOYEE_POPUP(false));
+      dispatch(viewEmployeePopup(false));
     }
   };
 
@@ -40,14 +45,14 @@ const EmployeeDetailedView = () => {
     const employeeToEditId = employeeBeingViewed?.employeeToViewId;
 
     dispatch(
-      SET_EMPLOYEE_TO_EDIT({
+      setEmployeeToEdit({
         ...employeeBeingViewed,
         employeeToEditId: employeeToEditId,
       })
     );
-    dispatch(SET_VIEW_EMPLOYEE_POPUP(false));
-    dispatch(SET_EMPLOYEE_EDIT_MODE(true));
-    dispatch(SET_ADD_EMPLOYEE_POPUP(true));
+    dispatch(viewEmployeePopup(false));
+    dispatch(setEmployeeEditMode(true));
+    dispatch(addNewEmployeePopup(true));
   };
 
   return (

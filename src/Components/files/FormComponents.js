@@ -61,11 +61,6 @@ export const UploadAvatar = ({
         >
           Change Avatar
         </Button>
-        {needUploadToDBBtn && (
-          <Button onClick={finalAction} variant="contained" color="primary">
-            Finalize
-          </Button>
-        )}
       </div>
     </Paper>
   );

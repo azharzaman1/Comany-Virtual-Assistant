@@ -24,20 +24,26 @@ import {
   selectEmployeeEditMode,
   selectEmployeesList,
   selectEmployeeToEdit,
-  EXPAND_EMPLOYEE_DEPARTMENTS_LIST,
-  SET_EDITED_EMPLOYEE,
+  expandDepartmentsList,
+  setEditedEmployee,
 } from "../redux/slices/employeesSlice";
 import { db } from "../Files/firebase";
-import { selectCurrentUserInDB, selectUser } from "../redux/slices/userSlice";
-import { SET_ADD_EMPLOYEE_POPUP } from "../redux/slices/generalSlice";
+import {
+  selectCurrentUserDBDetails,
+  selectCurrentUserInDB,
+  selectUser,
+  selectUserCollec,
+} from "../redux/slices/userSlice";
+import { addNewEmployeePopup } from "../redux/slices/generalSlice";
 import firebase from "firebase";
 
 const Form = () => {
   const dispatch = useDispatch();
   const companyRoles = useSelector(selectEmployeeDepartments);
   const currentUser = useSelector(selectUser);
+  const userCollection = useSelector(selectUserCollec);
   const employeesList = useSelector(selectEmployeesList);
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
+  const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const employeeEditMode = useSelector(selectEmployeeEditMode);
   const employeeToEdit = useSelector(selectEmployeeToEdit);
   const [fullName, setFullName] = useState(
@@ -82,18 +88,16 @@ const Form = () => {
     employeeEditMode ? employeeToEdit?.isPermanent : false
   );
 
-  const userRef = null;
-
   const addNewRoleToList = async () => {
     dispatch(
-      EXPAND_EMPLOYEE_DEPARTMENTS_LIST({
+      expandDepartmentsList({
         value: newRole.toLowerCase(),
         name: newRole,
       })
     );
-    if (currentUserInDB) {
+    if (currentUserDBDetails) {
       await db
-        .collection(userRef ? userRef : `${getFromLocalStorage("userRole")}s`)
+        .collection(userCollection)
         .doc(currentUser?.uid)
         .set(
           {
@@ -159,7 +163,7 @@ const Form = () => {
     } else {
       await addOrUpdateEmployee();
       resetFormHandler();
-      dispatch(SET_ADD_EMPLOYEE_POPUP(false));
+      dispatch(addNewEmployeePopup(false));
     }
   };
 
@@ -179,9 +183,7 @@ const Form = () => {
       addedAt: firebase.firestore.FieldValue.serverTimestamp(),
     };
 
-    const DocRef = db
-      .collection(userRef ? userRef : `${getFromLocalStorage("userRole")}s`)
-      .doc(currentUser?.uid);
+    const DocRef = db.collection(userCollection).doc(currentUser?.uid);
 
     if (!employeeEditMode) {
       await DocRef.collection("employeesList").add(employeeToAddOrUpdate);
@@ -191,7 +193,7 @@ const Form = () => {
         .doc(employeeToEdit?.employeeToEditId)
         .set(employeeToAddOrUpdate, { merge: true })
         .catch((error) => alert(error));
-      dispatch(SET_EDITED_EMPLOYEE(employeeToAddOrUpdate));
+      dispatch(setEditedEmployee(employeeToAddOrUpdate));
     }
 
     if (!employeeEditMode) {

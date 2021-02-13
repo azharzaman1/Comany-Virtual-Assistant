@@ -41,7 +41,9 @@ const Signup = () => {
       .then((user) => {
         if (user) {
           setToLocalStorage("userID", user?.user.uid);
-          setToLocalStorage("googleSignup_phase2", false);
+          if (!getFromLocalStorage("googleSignup_phase2")) {
+            setToLocalStorage("googleSignup_phase2", false);
+          }
         }
       })
       .catch((error) => alert(error.message));

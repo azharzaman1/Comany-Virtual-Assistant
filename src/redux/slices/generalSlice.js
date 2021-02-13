@@ -3,20 +3,20 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   addEmployeePopupState: false,
   employeeDetailedViewState: false,
-  loadingState: true,
+  loadingState: false,
 };
 
 const generalSlice = createSlice({
   name: "sliceName",
   initialState,
   reducers: {
-    SET_ADD_EMPLOYEE_POPUP: (state, action) => {
+    addNewEmployeePopup: (state, action) => {
       return {
         ...state,
         addEmployeePopupState: action.payload,
       };
     },
-    SET_VIEW_EMPLOYEE_POPUP: (state, action) => {
+    viewEmployeePopup: (state, action) => {
       return {
         ...state,
         employeeDetailedViewState: action.payload,
@@ -32,8 +32,8 @@ const generalSlice = createSlice({
 });
 
 export const {
-  SET_ADD_EMPLOYEE_POPUP,
-  SET_VIEW_EMPLOYEE_POPUP,
+  addNewEmployeePopup,
+  viewEmployeePopup,
   setLoading,
 } = generalSlice.actions;
 

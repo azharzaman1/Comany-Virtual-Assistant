@@ -11,37 +11,37 @@ export const employeesSlice = createSlice({
     editedEmployee: {},
   },
   reducers: {
-    SET_EMPLOYEES_LIST: (state, action) => {
+    setEmployeesList: (state, action) => {
       return {
         ...state,
         employeesList: action.payload,
       };
     },
-    SET_EMPLOYEE_TO_EDIT: (state, action) => {
+    setEmployeeToEdit: (state, action) => {
       return {
         ...state,
         employeeToEdit: action.payload,
       };
     },
-    SET_EMPLOYEE_TO_VIEW: (state, action) => {
+    setEmployeeToView: (state, action) => {
       return {
         ...state,
         employeeToView: action.payload,
       };
     },
-    SET_EMPLOYEE_EDIT_MODE: (state, action) => {
+    setEmployeeEditMode: (state, action) => {
       return {
         ...state,
         employeeEditMode: action.payload,
       };
     },
-    SET_EMPLOYEE_DEPARTMENTS_LIST: (state, action) => {
+    setEmployeeDepartments: (state, action) => {
       return {
         ...state,
         employeeDepartmentsList: action.payload,
       };
     },
-    EXPAND_EMPLOYEE_DEPARTMENTS_LIST: (state, action) => {
+    expandDepartmentsList: (state, action) => {
       return {
         ...state,
         employeeDepartmentsList: [
@@ -50,7 +50,7 @@ export const employeesSlice = createSlice({
         ],
       };
     },
-    SET_EDITED_EMPLOYEE: (state, action) => {
+    setEditedEmployee: (state, action) => {
       return {
         ...state,
         editedEmployee: action.payload,
@@ -60,13 +60,13 @@ export const employeesSlice = createSlice({
 });
 
 export const {
-  SET_EMPLOYEES_LIST,
-  SET_EMPLOYEE_EDIT_MODE,
-  SET_EMPLOYEE_TO_EDIT,
-  SET_EMPLOYEE_DEPARTMENTS_LIST,
-  EXPAND_EMPLOYEE_DEPARTMENTS_LIST,
-  SET_EDITED_EMPLOYEE,
-  SET_EMPLOYEE_TO_VIEW,
+  setEmployeesList,
+  setEmployeeEditMode,
+  setEmployeeToEdit,
+  setEmployeeDepartments,
+  expandDepartmentsList,
+  setEditedEmployee,
+  setEmployeeToView,
 } = employeesSlice.actions;
 
 export const selectEmployeesList = (state) =>

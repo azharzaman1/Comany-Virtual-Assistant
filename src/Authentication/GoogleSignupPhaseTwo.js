@@ -22,12 +22,13 @@ const GoogleSignupPhaseTwo = () => {
   const [companyCeoNameErr, setCompanyCeoNameErr] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(undefined);
-
-  const history = useHistory();
-
-  // Create Image Preview Locally
   const [avatarPreview, setAvatarPreview] = useState(undefined);
+  const history = useHistory();
+  // gs://virtual-assistant-applic-68a5e.appspot.com/avatars/b642876a-45ee-4a1b-adae-6b98e6c63ade
+  console.log(avatar);
   console.log(avatarPreview);
+  console.log(avatarUrl);
+
   useEffect(() => {
     console.log(avatar);
 
@@ -45,21 +46,26 @@ const GoogleSignupPhaseTwo = () => {
     getFromDoc("supporting_files", "departments", true, setDefaultDepartments);
   }, []);
 
-  const uploadAvatarToDB = () => {
-    const fileID = uuid();
-    const metadata = { contentType: avatar?.type };
-
-    const uploadTask = storage
-      .ref(`avatars/${fileID}`)
-      .put(avatar, metadata)
-      .then((snapshot) => snapshot.ref.getDownloadURL())
-      .then((url) => setAvatarUrl(url));
-  };
-
   const proceedToDashboard = async () => {
     if (role == "" || fullName == "") {
       alert("Some mendatory fields are missing, please recheck and try again");
     } else {
+      if (avatar) {
+        const fileID = uuid();
+        const metadata = { contentType: avatar?.type };
+        await storage
+          .ref(`avatars/${fileID}`)
+          .put(avatar, metadata)
+          .then((snapshot) => snapshot.ref.getDownloadURL())
+          .then((url) => {
+            console.log("urrrrrrrrrrrrrrrrrrrrl", url);
+            setAvatarUrl(url);
+          });
+      } else {
+        return null;
+      }
+      console.log("Url 222222222", avatarUrl);
+
       let data = {
         userDetails: {
           emailDisplayName: currentUser?.displayName,
@@ -143,7 +149,6 @@ const GoogleSignupPhaseTwo = () => {
               setSelectedFile={setAvatar}
               avaSrc={avatarPreview ? avatarPreview : currentUser?.photoUrl}
               needUploadToDBBtn={avatarPreview ? true : false}
-              finalAction={uploadAvatarToDB}
             />
             <Input
               onChange={(e) => setFullName(e.target.value)}
