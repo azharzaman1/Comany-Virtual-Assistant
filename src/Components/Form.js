@@ -28,11 +28,7 @@ import {
   SET_EDITED_EMPLOYEE,
 } from "../redux/slices/employeesSlice";
 import { db } from "../Files/firebase";
-import {
-  selectCurrentUserInDB,
-  selectUser,
-  selectUserRef,
-} from "../redux/slices/userSlice";
+import { selectCurrentUserInDB, selectUser } from "../redux/slices/userSlice";
 import { SET_ADD_EMPLOYEE_POPUP } from "../redux/slices/generalSlice";
 import firebase from "firebase";
 
@@ -40,7 +36,6 @@ const Form = () => {
   const dispatch = useDispatch();
   const companyRoles = useSelector(selectEmployeeDepartments);
   const currentUser = useSelector(selectUser);
-  const userRef = useSelector(selectUserRef);
   const employeesList = useSelector(selectEmployeesList);
   const currentUserInDB = useSelector(selectCurrentUserInDB);
   const employeeEditMode = useSelector(selectEmployeeEditMode);
@@ -87,6 +82,8 @@ const Form = () => {
     employeeEditMode ? employeeToEdit?.isPermanent : false
   );
 
+  const userRef = null;
+
   const addNewRoleToList = async () => {
     dispatch(
       EXPAND_EMPLOYEE_DEPARTMENTS_LIST({
@@ -96,7 +93,7 @@ const Form = () => {
     );
     if (currentUserInDB) {
       await db
-        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+        .collection(userRef ? userRef : `${getFromLocalStorage("userRole")}s`)
         .doc(currentUser?.uid)
         .set(
           {
@@ -183,7 +180,7 @@ const Form = () => {
     };
 
     const DocRef = db
-      .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+      .collection(userRef ? userRef : `${getFromLocalStorage("userRole")}s`)
       .doc(currentUser?.uid);
 
     if (!employeeEditMode) {

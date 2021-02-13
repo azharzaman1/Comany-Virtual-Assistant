@@ -28,16 +28,9 @@ import {
   EditOutlined,
   Search,
   Visibility,
-  Watch,
 } from "@material-ui/icons";
 import { db } from "../Files/firebase";
-import { collectionName } from "./files/utils";
-import {
-  selectCurrentUserInDB,
-  selectCurrentUserRole,
-  selectUser,
-  selectUserRef,
-} from "../redux/slices/userSlice";
+import { selectCurrentUserInDB, selectUser } from "../redux/slices/userSlice";
 import {
   SET_ADD_EMPLOYEE_POPUP,
   SET_VIEW_EMPLOYEE_POPUP,
@@ -55,10 +48,7 @@ const useStyles = makeStyles((theme) => ({
 const TableComponent = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const userRef = useSelector(selectUserRef);
   const currentUserInDB = useSelector(selectCurrentUserInDB);
-
-  const currentUserRole = useSelector(selectCurrentUserRole);
   const employeesList = useSelector(selectEmployeesList);
   const companyRoles = useSelector(selectEmployeeDepartments);
   const pages = [5, 10, 25];
@@ -69,7 +59,11 @@ const TableComponent = () => {
       return items;
     },
   });
+
   const classes = useStyles();
+
+  const userRef = null;
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -105,7 +99,7 @@ const TableComponent = () => {
     let subscribe = () => {};
     if (currentUserInDB) {
       subscribe = db
-        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+        .collection(userRef ? userRef : `${getFromLocalStorage("userRef")}s`)
         .doc(currentUser?.uid)
         .collection("employeesList")
         .doc(

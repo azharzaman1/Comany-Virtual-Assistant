@@ -12,13 +12,15 @@ import {
 } from "./redux/slices/employeesSlice";
 import { auth, db } from "./Files/firebase";
 import {
-  SET_USER,
-  SET_USER_REF,
+  setUser,
   selectUser,
-  selectUserRef,
   selectLoggedOutState,
-  SET_CURRENT_USER_IN_DB,
+  setUserDBDetails,
+  setUserCollection,
+  selectUserCollec,
   selectCurrentUserInDB,
+  setCurrentUserDBDetails,
+  selectCurrentUserDBDetails,
 } from "./redux/slices/userSlice";
 import {
   getFromLocalStorage,
@@ -35,35 +37,72 @@ import GoogleAuthPhaseTwo from "./Authentication/GoogleSignupPhaseTwo";
 const App = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const userRef = useSelector(selectUserRef);
+  const userCollection = useSelector(selectUserCollec);
+  const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const loadingState = useSelector(selectLoadingState);
-  const loggedOutRecently = useSelector(selectLoggedOutState);
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
   const [allUsers, setAllUsers] = useState([]);
+  const currentUserInDB = useSelector(selectCurrentUserInDB);
+  const [tempUsers, setTempUsers] = useState([]);
+  // Fetch All user details
+
+  let userRef = null;
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(
+        setUserCollection(
+          getFromLocalStorage("userRole")
+            ? `${getFromLocalStorage("userRole")}s`
+            : fetchCollectionFromDB()
+        )
+      );
+
+      // Will not be called if userRole is already present in localStorage
+
+      const fetchCollectionFromDB = () => {
+        db.collection("all_users").onSnapshot((snapshot) =>
+          setTempUsers(snapshot.docs.map((doc) => doc.data()))
+        );
+      };
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser && userCollection) {
+      db.collection(userCollection)
+        .doc(currentUser?.uid)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            dispatch(setCurrentUserDBDetails(doc.data()));
+          }
+        });
+    }
+  }, [currentUser, userCollection]);
 
   // Fetch all users from DB
 
-  useEffect(() => {
-    const subscribe = db.collection("all_users").onSnapshot((snapshot) =>
-      setAllUsers(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          userData: doc.data(),
-        }))
-      )
-    );
-    return () => {
-      subscribe();
-    };
-  }, [currentUser]);
+  // useEffect(() => {
+  //   const subscribe = db.collection("all_users").onSnapshot((snapshot) =>
+  //     setAllUsers(
+  //       snapshot.docs.map((doc) => ({
+  //         id: doc.id,
+  //         userData: doc.data(),
+  //       }))
+  //     )
+  //   );
+  //   return () => {
+  //     subscribe();
+  //   };
+  // }, [currentUser]);
 
-  const userInDB = allUsers?.find((userInDB) => {
-    return userInDB?.id == currentUser?.uid;
-  });
+  // const userInDB = allUsers?.find((userInDB) => {
+  //   return userInDB?.id == currentUser?.uid;
+  // });
 
-  if (userInDB) {
-    dispatch(SET_CURRENT_USER_IN_DB(userInDB));
-  }
+  // if (userInDB) {
+  //   // dispatch(setUserDBDetails(userInDB));
+  // }
 
   // Set userRef to store
 
@@ -77,7 +116,7 @@ const App = () => {
   // Fetch and Set User Private Employee Departments List to store
 
   useEffect(() => {
-    if (userRef || getFromLocalStorage("userRef")) {
+    if (currentUser || userCollection) {
       db.collection(userRef ? userRef : getFromLocalStorage("userRef"))
         .doc(currentUser?.uid)
         .get()
@@ -101,7 +140,7 @@ const App = () => {
       const sortedData = [...data];
       return sortedData.sort((a, b) => (a.id > b.id ? 1 : -1));
     };
-  }, [currentUser, currentUserInDB]);
+  }, [currentUserDBDetails]);
 
   // Fetch and Set Employee List to store
 
@@ -144,7 +183,7 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         dispatch(
-          SET_USER({
+          setUser({
             uid: authUser?.uid,
             email: authUser?.email,
             displayName: authUser?.displayName,
@@ -158,7 +197,7 @@ const App = () => {
         }, 1500);
         setToLocalStorage("userID", authUser?.uid);
       } else {
-        dispatch(SET_USER(null));
+        dispatch(setUser(null));
       }
     });
 
@@ -178,9 +217,9 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className="app">
-        {/* <Popup open={loadingState} loadingPopup>
+        <Popup open={loadingState} loadingPopup>
           <GradientLoader />
-        </Popup> */}
+        </Popup>
         <Router>
           <Switch>
             <Route exact path="/">

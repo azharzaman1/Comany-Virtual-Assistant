@@ -18,7 +18,7 @@ import {
 import { auth, db } from "../Files/firebase";
 import {
   selectUser,
-  LOGED_OUT_RECENTLY,
+  loggedOutRecently,
   selectCurrentUserInDB,
 } from "../redux/slices/userSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -43,7 +43,7 @@ const SideMenu = () => {
   const handleLogout = () => {
     auth.signOut();
     setAnchorEl(null);
-    dispatch(LOGED_OUT_RECENTLY());
+    dispatch(loggedOutRecently());
   };
 
   const verifyAccountHandler = () => {

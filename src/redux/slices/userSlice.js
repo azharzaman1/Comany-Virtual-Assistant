@@ -5,63 +5,56 @@ export const userSlice = createSlice({
   initialState: {
     currentUser: null,
     loggedOutRecently: false,
-    currentUserRole: "googleAccount_user",
-    currentUserInDB: "",
-    currentUserDetails: {},
-    userRef: "",
+    currentUserDBDetails: {},
+    userCollection: "",
+    currentUserInDB: {},
   },
   reducers: {
-    SET_USER: (state, action) => {
+    setUser: (state, action) => {
       return {
         ...state,
         currentUser: action.payload,
         loggedOutRecently: false,
       };
     },
-    SET_USER_DETAILS: (state, action) => {
-      return {
-        ...state,
-        currentUserDetails: action.payload,
-      };
-    },
 
-    SET_CURRENT_USER_IN_DB: (state, action) => {
-      return {
-        ...state,
-        currentUserInDB: action.payload,
-      };
-    },
-
-    LOGED_OUT_RECENTLY: (state, action) => {
+    loggedOutRecently: (state) => {
       return {
         ...state,
         loggedOutRecently: true,
       };
     },
-    SET_USER_ROLE: (state, action) => {
+
+    setUserCollection: (state, action) => {
       return {
         ...state,
-        currentUserRole: action.payload,
+        userCollection: action.payload,
+      };
+    },
+
+    setCurrentUserDBDetails: (state, action) => {
+      return {
+        ...state,
+        currentUserDBDetails: action.payload,
       };
     },
   },
 });
 
 export const {
-  SET_USER,
-  LOGED_OUT_RECENTLY,
-  SET_USER_ROLE,
-  SET_CURRENT_USER_IN_DB,
-  SET_USER_DETAILS,
-  SET_USER_REF,
+  setUser,
+  loggedOutRecently,
+  setCurrentUserDBDetails,
+  setUserCollection,
+  setCurrentUserInDB,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.userStore.currentUser;
 export const selectLoggedOutState = (state) =>
   state.userStore.loggedOutRecently;
-export const selectCurrentUserRole = (state) => state.userStore.currentUserRole;
+export const selectUserCollec = (state) => state.userStore.userCollection;
+export const selectCurrentUserDBDetails = (state) =>
+  state.userStore.currentUserDBDetails;
 export const selectCurrentUserInDB = (state) => state.userStore.currentUserInDB;
-export const selectUserDetails = (state) => state.userStore.currentUserDetails;
-export const selectUserRef = (state) => state.userStore.userRef;
 
 export default userSlice.reducer;

@@ -33,7 +33,7 @@ const Header = () => {
           <Grid item>
             <IconButton color="secondary">
               <Badge color="secondary" badgeContent={4}>
-                <NotificationsNone className="header__icon" fontSize="medium" />
+                <NotificationsNone className="header__icon" fontSize="small" />
               </Badge>
             </IconButton>
             <IconButton color="secondary">
