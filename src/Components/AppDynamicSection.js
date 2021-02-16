@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Form from "./Form";
-import PageHeader from "./PageHeader";
+import SectionHeader from "./SectionHeader";
 import { PeopleOutlineTwoTone } from "@material-ui/icons";
 import { Paper } from "@material-ui/core";
 import "./AppDynamicSection.css";
 import Table from "./Table";
 import Popup from "./Popup";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  selectEmployeeEditMode,
-  selectEmployeeToEdit,
-  setEmployeeEditMode,
-} from "../redux/slices/employeesSlice";
+import { useSelector } from "react-redux";
 import EmployeeDetailedView from "./EmployeeDetailedView";
 import {
   selectAddEmployeePopupState,
@@ -19,7 +14,6 @@ import {
 } from "../redux/slices/generalSlice";
 
 const PageChangeAbleContentSection = () => {
-  const employeeEditMode = useSelector(selectEmployeeEditMode);
   const addEmployeePopupState = useSelector(selectAddEmployeePopupState);
   const employeeDetailedViewState = useSelector(
     selectEmployeeDetailedViewState
@@ -27,7 +21,7 @@ const PageChangeAbleContentSection = () => {
 
   return (
     <>
-      <PageHeader
+      <SectionHeader
         title="All Employees"
         subTitle="List of your Employees"
         icon={<PeopleOutlineTwoTone color="primary" fontSize="large" />}

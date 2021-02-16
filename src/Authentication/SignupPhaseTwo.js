@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button, Paper } from "@material-ui/core";
 import "./GoogleAuthPhaseTwo.css";
-import { Input, UploadAvatar } from "../Components/files/FormComponents";
+import {
+  Input,
+  UploadAvatar,
+  UploadingProgress,
+} from "../Components/files/FormComponents";
 import { Link, useHistory } from "react-router-dom";
 import { getFromDoc, setToDoc, sortById } from "../Components/files/utils";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,12 +13,11 @@ import { selectUser } from "../redux/slices/userSlice";
 import firebase from "firebase";
 import { storage } from "../Files/firebase";
 import { v4 as uuid } from "uuid";
-import { setToLocalStorage } from "../Components/files/LocalStorage";
+import "./SignupPhase2.css";
 
-const GoogleSignupPhaseTwo = () => {
+const SignupPhaseTwo = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const [defaultDepartments, setDefaultDepartments] = useState();
   const [role, setRole] = useState("");
   const [fullName, setFullName] = useState("");
   const [fullNameErr, setFullNameErr] = useState(false);
@@ -23,16 +26,12 @@ const GoogleSignupPhaseTwo = () => {
   const [avatar, setAvatar] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState(undefined);
   const [avatarPreview, setAvatarPreview] = useState(undefined);
-  const [uploading, setUploading] = useState(false);
+  const [defaultDepartments, setDefaultDepartments] = useState();
   const [progress, setProgress] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   const history = useHistory();
-
-  console.log("Final URL", avatarUrl);
-
   useEffect(() => {
-    console.log(avatar);
-
     if (!avatar) {
       setAvatarPreview(undefined);
       return;
@@ -80,51 +79,42 @@ const GoogleSignupPhaseTwo = () => {
   };
 
   const proceedToDashboard = async () => {
-    if (role == "" || fullName == "") {
+    if (fullName === "" || role === "") {
       alert("Some mendatory fields are missing, please recheck and try again");
     } else {
-      let data = {
+      let dataToWrite = {
+        noOfEmployeesAdded: 0,
         userDetails: {
-          emailDisplayName: currentUser?.displayName,
-          emailPhotoURL: currentUser?.photoUrl,
-          emailVerified: currentUser?.emailVerified,
-          uid: currentUser?.uid,
-          email: currentUser?.email,
+          accountDisplayName:
+            role == "company_user" ? companyCeoName : fullName,
+          accountPhotoURL: avatarUrl ? avatarUrl : "",
           companyUser: role == "company_user" ? true : false,
           companyFullName: role == "company_user" ? fullName : "",
           companyCeoName: role == "company_user" ? companyCeoName : "",
-          accountDisplayName:
-            role == "company_user" ? companyCeoName : fullName,
-          userRole: role !== "" ? role : "",
+          userRole: role,
+          emailVerified: currentUser?.emailVerified,
           memberSince: firebase.firestore.FieldValue.serverTimestamp(),
-          accountPhotoURL: avatarUrl ? avatarUrl : currentUser?.photoUrl,
-          accountPhase2Completed: true,
+          signupPhaseTwo: true,
         },
-        noOfEmployeesAdded: 0,
-        uniqueDepartmentsList: defaultDepartments ? defaultDepartments : [],
+        uniqueDepartmentsList: defaultDepartments,
       };
 
-      setToDoc(`${role}s`, currentUser?.uid, data);
+      await setToDoc(`${role}s`, currentUser?.uid, dataToWrite);
 
-      let dataAll = {
-        uid: currentUser?.uid,
-        email: currentUser?.email,
-        emailPhotoURL: currentUser?.photoUrl,
-        emailDisplayName: currentUser?.displayName,
-        emailVerified: currentUser?.emailVerified,
-        memberSince: firebase.firestore.FieldValue.serverTimestamp(),
+      let dataToWrite2 = {
+        accountDisplayName: role == "company_user" ? companyCeoName : fullName,
+        accountPhotoURL: avatarUrl ? avatarUrl : "",
         companyUser: role == "company_user" ? true : false,
         companyFullName: role == "company_user" ? fullName : "",
         companyCeoName: role == "company_user" ? companyCeoName : "",
-        accountDisplayName: role == "company_user" ? companyCeoName : fullName,
-        accountPhotoURL: avatarUrl ? avatarUrl : currentUser?.photoUrl,
         userRole: role,
-        accountPhase2Completed: true,
+        emailVerified: currentUser?.emailVerified,
+        memberSince: firebase.firestore.FieldValue.serverTimestamp(),
+        signupPhaseTwo: true,
       };
 
-      setToDoc("all_users", currentUser?.uid, dataAll);
-      setToLocalStorage("googleSignup_phase2", true);
-      setToLocalStorage("userRole", role);
+      await setToDoc("all_users", currentUser?.uid, dataToWrite2);
+
       history.replace("/");
     }
   };
@@ -149,8 +139,8 @@ const GoogleSignupPhaseTwo = () => {
   };
 
   return (
-    <div className="googleAuth__phase2 absc-center">
-      <Paper className="googleAuth__content absc-center">
+    <div className="signup__phase2 absc-center">
+      <Paper className="signupPhase2__content absc-center">
         <div className="signup__userRole googleAuth__userRole">
           <h3>Are you?</h3>
           <div className="userRole__btns">
@@ -163,7 +153,7 @@ const GoogleSignupPhaseTwo = () => {
           </div>
         </div>
         {role !== "" ? (
-          <div className="googleAuth__phase2Inputs absc-center">
+          <div className="signup__phase2Inputs absc-center">
             <UploadAvatar
               needImgPreview
               setSelectedFile={setAvatar}
@@ -213,4 +203,4 @@ const GoogleSignupPhaseTwo = () => {
   );
 };
 
-export default GoogleSignupPhaseTwo;
+export default SignupPhaseTwo;

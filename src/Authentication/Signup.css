@@ -6,7 +6,8 @@
 
 .signup__from {
   padding: 1.375rem 0.8rem 1.5rem;
-  width: 26.5rem;
+  width: 25.5rem;
+  max-width: 96vw;
 }
 
 .signup__tagline {
