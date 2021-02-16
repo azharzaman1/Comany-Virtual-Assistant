@@ -5,6 +5,10 @@ import Google from "./google.png";
 import { auth, googleProvider } from "../Files/firebase";
 import { validateEmail } from "../Components/files/FormValidation";
 import { Link, useHistory } from "react-router-dom";
+import {
+  getFromLocalStorage,
+  setToLocalStorage,
+} from "../Components/files/LocalStorage";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -14,13 +18,23 @@ const Signin = () => {
 
   const history = useHistory();
 
-  const signInWithGoogle = () => {
-    auth
+  const signInWithGoogle = async () => {
+    await auth
       .signInWithPopup(googleProvider)
       .then((user) => {
-        history.replace("/");
+        if (user) {
+          setToLocalStorage("userID", user?.user.uid);
+          if (!getFromLocalStorage("googleSignup_phase2")) {
+            setToLocalStorage("googleSignup_phase2", false);
+          }
+        }
       })
       .catch((error) => alert(error.message));
+    if (getFromLocalStorage("googleSignup_phase2")) {
+      history.replace("/");
+    } else {
+      history.replace("/auth/registration/google/phase-two");
+    }
   };
 
   const signinHandler = async (e) => {

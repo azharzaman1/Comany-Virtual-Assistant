@@ -31,6 +31,7 @@ import { selectLoadingState, setLoading } from "./redux/slices/generalSlice";
 import Popup from "./Components/Popup";
 import GoogleAuthPhaseTwo from "./Authentication/GoogleSignupPhaseTwo";
 import { sortById } from "./Components/files/utils";
+import SignupPhaseTwo from "./Authentication/SignupPhaseTwo";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -44,21 +45,26 @@ const App = () => {
   useEffect(() => {
     console.log("Current logged in User >>>>", currentUser);
 
+    // Will not be called if userRole is already present in localStorage
+
+    const fetchCollectionFromDB = () => {
+      console.log("Called");
+      return db
+        .collection("all_users")
+        .onSnapshot((snapshot) =>
+          snapshot.docs
+            .map((doc) => doc.data())
+            .find((user) => user?.uid == currentUser?.uid)
+        );
+    };
+
     dispatch(
       setUserCollection(
         getFromLocalStorage("userRole")
           ? `${getFromLocalStorage("userRole")}s`
-          : fetchCollectionFromDB()
+          : `${fetchCollectionFromDB?.userRole}s`
       )
     );
-
-    // Will not be called if userRole is already present in localStorage
-
-    const fetchCollectionFromDB = () => {
-      db.collection("all_users").onSnapshot((snapshot) =>
-        setTempUsers(snapshot.docs.map((doc) => doc.data()))
-      );
-    };
   }, [currentUser]);
 
   useEffect(() => {
@@ -161,6 +167,9 @@ const App = () => {
 
             <Route path="/auth/registration/google/phase-two">
               <GoogleAuthPhaseTwo />
+            </Route>
+            <Route path="/auth/registration/phase-two">
+              <SignupPhaseTwo />
             </Route>
             <Route path="/auth/registration">
               <Signup />

@@ -56,10 +56,9 @@ const Signup = () => {
 
   const signupHandler = async (e) => {
     e.preventDefault();
-
-    if (fullName === "") {
-      setFullNameErr(true);
-    }
+    // if (fullName === "") {
+    //   setFullNameErr(true);
+    // }
     if (!validateEmail(email)) {
       setEmailErr(true);
     }
@@ -70,53 +69,17 @@ const Signup = () => {
       setPasswordConfirmErr(true);
     }
     if (
-      fullName !== "" &&
       validateEmail(email) &&
       password !== "" &&
       password == passwordConfirm
     ) {
       await auth
         .createUserWithEmailAndPassword(email, password)
-        .then(async (user) => {
-          setToLocalStorage("userID", user?.user.uid);
-          setToDoc(`${role}s`, user?.user.uid, dataToWrite);
-          let dataToWrite = {
-            noOfEmployeesAdded: 0,
-            userDetails: {
-              email: email,
-              password: password,
-              accountDisplayName:
-                role == "company_user" ? companyCeoName : fullName,
-              companyUser: false,
-              companyFullName: role == "company_user" ? fullName : "",
-              companyCeoName: role == "company_user" ? companyCeoName : "",
-              companyCeoName: "",
-              accountPhotoURL: "",
-              userRole: role,
-              emailVerified: user?.user.emailVerified,
-              memberSince: firebase.firestore.FieldValue.serverTimestamp(),
-            },
-            uniqueDepartmentsList: tempDepartments,
-          };
-
-          setToDoc("all_users", user?.user.uid, dataToWrite2);
-
-          let dataToWrite2 = {
-            email: email,
-            password: password,
-            accountDisplayName:
-              role == "company_user" ? companyCeoName : fullName,
-            accountPhotoURL: "",
-            companyUser: false,
-            companyFullName: role == "company_user" ? fullName : "",
-            companyCeoName: role == "company_user" ? companyCeoName : "",
-            companyCeoName: "",
-            userRole: role,
-            emailVerified: user?.user.emailVerified,
-            memberSince: firebase.firestore.FieldValue.serverTimestamp(),
-          };
-          setToLocalStorage("userRole", role);
-          history.replace("/");
+        .then((user) => {
+          if (user) {
+            setToLocalStorage("userID", user?.user.uid);
+            history.replace("/auth/registration/phase-two");
+          }
         })
         .catch((error) => alert(error.message));
     } else {

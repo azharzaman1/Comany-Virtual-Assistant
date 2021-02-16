@@ -11,7 +11,7 @@ import { storage } from "../Files/firebase";
 import { v4 as uuid } from "uuid";
 import { setToLocalStorage } from "../Components/files/LocalStorage";
 
-const GoogleSignupPhaseTwo = () => {
+const SignupPhaseTwo = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const [defaultDepartments, setDefaultDepartments] = useState();
@@ -24,6 +24,7 @@ const GoogleSignupPhaseTwo = () => {
   const [avatarUrl, setAvatarUrl] = useState(undefined);
   const [avatarPreview, setAvatarPreview] = useState(undefined);
   const [uploading, setUploading] = useState(false);
+
   const history = useHistory();
 
   console.log("Final URL", avatarUrl);
@@ -65,6 +66,48 @@ const GoogleSignupPhaseTwo = () => {
         }
       });
   };
+  {
+    /*
+  const proceedToDashboard = async () => {
+setToDoc(`${role}s`, user?.user.uid, dataToWrite);
+          let dataToWrite = {
+            noOfEmployeesAdded: 0,
+            userDetails: {
+              email: email,
+              password: password,
+              accountDisplayName:
+                role == "company_user" ? companyCeoName : fullName,
+              companyUser: false,
+              companyFullName: role == "company_user" ? fullName : "",
+              companyCeoName: role == "company_user" ? companyCeoName : "",
+              companyCeoName: "",
+              accountPhotoURL: "",
+              userRole: role,
+              emailVerified: user?.user.emailVerified,
+              memberSince: firebase.firestore.FieldValue.serverTimestamp(),
+            },
+            uniqueDepartmentsList: tempDepartments,
+          };
+
+          setToDoc("all_users", user?.user.uid, dataToWrite2);
+
+          let dataToWrite2 = {
+            email: email,
+            password: password,
+            accountDisplayName:
+              role == "company_user" ? companyCeoName : fullName,
+            accountPhotoURL: "",
+            companyUser: false,
+            companyFullName: role == "company_user" ? fullName : "",
+            companyCeoName: role == "company_user" ? companyCeoName : "",
+            companyCeoName: "",
+            userRole: role,
+            emailVerified: user?.user.emailVerified,
+            memberSince: firebase.firestore.FieldValue.serverTimestamp(),
+  }
+
+  }*/
+  }
 
   const proceedToDashboard = async () => {
     if (role == "" || fullName == "") {
@@ -199,4 +242,4 @@ const GoogleSignupPhaseTwo = () => {
   );
 };
 
-export default GoogleSignupPhaseTwo;
+export default SignupPhaseTwo;

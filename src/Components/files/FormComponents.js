@@ -30,11 +30,13 @@ export const Input = ({
 };
 
 export const UploadAvatar = ({
-  avaSrc,
+  needImgPreview,
+  imgSrc,
   specificClass,
   setSelectedFile,
-  needUploadToDBBtn,
-  finalAction,
+  needActionTwoBtn,
+  actionTwo,
+  uploading,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -44,7 +46,7 @@ export const UploadAvatar = ({
 
   return (
     <Paper className={`avatarUpload__element absc-center ${specificClass}`}>
-      <Avatar className="avatarEle" src={avaSrc} />
+      {needImgPreview && <Avatar className="avatarEle" src={imgSrc} />}
       <input
         style={{ display: "none" }}
         type="file"
@@ -53,6 +55,7 @@ export const UploadAvatar = ({
       />
       <div className="fileAction__btns">
         <Button
+          disabled={uploading}
           onClick={() => {
             fileInputRef.current.click();
           }}
@@ -61,6 +64,16 @@ export const UploadAvatar = ({
         >
           Change Avatar
         </Button>
+        {needActionTwoBtn && (
+          <Button
+            disabled={uploading}
+            onClick={actionTwo}
+            variant="contained"
+            color="primary"
+          >
+            Upload
+          </Button>
+        )}
       </div>
     </Paper>
   );
