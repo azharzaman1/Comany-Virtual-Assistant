@@ -2,17 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Button, Card, TextField } from "@material-ui/core";
 import "./Signup.css";
 import Google from "./google.png";
-import { auth, db, googleProvider } from "../Files/firebase";
+import { auth, googleProvider } from "../Files/firebase";
 import { validateEmail } from "../Components/files/FormValidation";
 import { Link, useHistory } from "react-router-dom";
-import {
-  selectCurrentUserRole,
-  selectUser,
-  selectUserRef,
-  SET_USER_ROLE,
-} from "../redux/slices/userSlice";
+import { selectUser } from "../redux/slices/userSlice";
 import { useSelector, useDispatch } from "react-redux";
-import { collectionName, setToDoc } from "../Components/files/utils";
+import { setToDoc } from "../Components/files/utils";
 import firebase from "firebase";
 import {
   getFromLocalStorage,
@@ -22,9 +17,8 @@ import { Input } from "../Components/files/FormComponents";
 
 const Signup = () => {
   const dispatch = useDispatch();
-  const userRef = useSelector(selectUserRef);
   const currentUser = useSelector(selectUser);
-  const currentUserRole = useSelector(selectCurrentUserRole);
+  const [role, setRole] = useState("");
   const [fullName, setFullName] = useState("");
   const [companyCeoName, setCompanyCeoName] = useState("");
   const [companyCeoNameErr, setCompanyCeoNameErr] = useState(false);
@@ -47,7 +41,9 @@ const Signup = () => {
       .then((user) => {
         if (user) {
           setToLocalStorage("userID", user?.user.uid);
-          setToLocalStorage("googleSignup_phase2", false);
+          if (!getFromLocalStorage("googleSignup_phase2")) {
+            setToLocalStorage("googleSignup_phase2", false);
+          }
         }
       })
       .catch((error) => alert(error.message));
@@ -83,22 +79,20 @@ const Signup = () => {
         .createUserWithEmailAndPassword(email, password)
         .then(async (user) => {
           setToLocalStorage("userID", user?.user.uid);
-          setToDoc(`${currentUserRole}s`, user?.user.uid, dataToWrite);
+          setToDoc(`${role}s`, user?.user.uid, dataToWrite);
           let dataToWrite = {
             noOfEmployeesAdded: 0,
             userDetails: {
               email: email,
               password: password,
               accountDisplayName:
-                currentUserRole == "company_user" ? companyCeoName : fullName,
+                role == "company_user" ? companyCeoName : fullName,
               companyUser: false,
-              companyFullName:
-                currentUserRole == "company_user" ? fullName : "",
-              companyCeoName:
-                currentUserRole == "company_user" ? companyCeoName : "",
+              companyFullName: role == "company_user" ? fullName : "",
+              companyCeoName: role == "company_user" ? companyCeoName : "",
               companyCeoName: "",
               accountPhotoURL: "",
-              userRole: currentUserRole,
+              userRole: role,
               emailVerified: user?.user.emailVerified,
               memberSince: firebase.firestore.FieldValue.serverTimestamp(),
             },
@@ -111,17 +105,17 @@ const Signup = () => {
             email: email,
             password: password,
             accountDisplayName:
-              currentUserRole == "company_user" ? companyCeoName : fullName,
+              role == "company_user" ? companyCeoName : fullName,
             accountPhotoURL: "",
             companyUser: false,
-            companyFullName: currentUserRole == "company_user" ? fullName : "",
-            companyCeoName:
-              currentUserRole == "company_user" ? companyCeoName : "",
+            companyFullName: role == "company_user" ? fullName : "",
+            companyCeoName: role == "company_user" ? companyCeoName : "",
             companyCeoName: "",
-            userRole: currentUserRole,
+            userRole: role,
             emailVerified: user?.user.emailVerified,
             memberSince: firebase.firestore.FieldValue.serverTimestamp(),
           };
+          setToLocalStorage("userRole", role);
           history.replace("/");
         })
         .catch((error) => alert(error.message));
@@ -136,15 +130,19 @@ const Signup = () => {
   const companyTab = document.getElementById("companyTab");
 
   const individualTabFunc = () => {
-    individualTab.classList.add("activeTab");
-    companyTab.classList.remove("activeTab");
-    dispatch(SET_USER_ROLE("individual_user"));
+    if (individualTab) {
+      individualTab.classList.add("activeTab");
+      companyTab.classList.remove("activeTab");
+      setRole("individual_user");
+    }
   };
 
   const campanyTabFunc = () => {
-    companyTab.classList.add("activeTab");
-    individualTab.classList.remove("activeTab");
-    dispatch(SET_USER_ROLE("company_user"));
+    if (companyTab) {
+      companyTab.classList.add("activeTab");
+      individualTab.classList.remove("activeTab");
+      setRole("company_user");
+    }
   };
 
   return (
@@ -166,7 +164,7 @@ const Signup = () => {
               </span>
             </div>
           </div>
-          {currentUserRole == "googleAccount_user" ? (
+          {role == "" ? (
             <></>
           ) : (
             <>
@@ -176,14 +174,12 @@ const Signup = () => {
                   value={fullName}
                   type="text"
                   label={
-                    currentUserRole === "individual_user"
-                      ? "Full name"
-                      : "Company name"
+                    role === "individual_user" ? "Full name" : "Company name"
                   }
                   error={fullNameErr}
                   helperText={fullNameErr ? "This field is required" : ""}
                 />
-                {currentUserRole === "company_user" && (
+                {role === "company_user" && (
                   <Input
                     onChange={(e) => setCompanyCeoName(e.target.value)}
                     value={companyCeoName}

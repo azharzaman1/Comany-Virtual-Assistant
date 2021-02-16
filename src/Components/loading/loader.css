@@ -1,3 +1,9 @@
+.loading__popup {
+  background-color: rgba(65, 105, 225, 0.72);
+  background-color: rgba(65, 105, 225, 0.582);
+  /* background-color: #1f378560; */
+}
+
 .loading__sec {
   width: 250px;
   height: 230px;

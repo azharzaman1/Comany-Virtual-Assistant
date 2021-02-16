@@ -3,8 +3,8 @@ import { Button, Dialog, DialogContent, DialogTitle } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { useDispatch } from "react-redux";
 import {
-  SET_ADD_EMPLOYEE_POPUP,
-  SET_VIEW_EMPLOYEE_POPUP,
+  addNewEmployeePopup,
+  viewEmployeePopup,
 } from "../redux/slices/generalSlice";
 
 const Popup = ({
@@ -18,8 +18,8 @@ const Popup = ({
   const dispatch = useDispatch();
 
   const closePopups = () => {
-    dispatch(SET_VIEW_EMPLOYEE_POPUP(false));
-    dispatch(SET_ADD_EMPLOYEE_POPUP(false));
+    dispatch(viewEmployeePopup(false));
+    dispatch(addNewEmployeePopup(false));
   };
   return (
     <>

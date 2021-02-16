@@ -4,7 +4,6 @@ import "./SideMenu.css";
 import {
   Accessibility,
   ChevronLeft,
-  ContactSupport,
   Equalizer,
   EventAvailable,
   HelpOutline,
@@ -18,8 +17,8 @@ import {
 import { auth, db } from "../Files/firebase";
 import {
   selectUser,
-  LOGED_OUT_RECENTLY,
-  selectCurrentUserInDB,
+  loggedOutRecently,
+  selectCurrentUserDBDetails,
 } from "../redux/slices/userSlice";
 import { useSelector, useDispatch } from "react-redux";
 import NavigationOption from "./NavigationOption";
@@ -29,7 +28,7 @@ import firebase from "firebase";
 const SideMenu = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
+  const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -43,7 +42,7 @@ const SideMenu = () => {
   const handleLogout = () => {
     auth.signOut();
     setAnchorEl(null);
-    dispatch(LOGED_OUT_RECENTLY());
+    dispatch(loggedOutRecently());
   };
 
   const verifyAccountHandler = () => {
@@ -61,33 +60,35 @@ const SideMenu = () => {
         <div className="sidebar__header">
           <Avatar
             src={
-              currentUserInDB?.userData?.accountPhotoURL
-                ? currentUserInDB?.userData?.accountPhotoURL
+              currentUserDBDetails?.userDetails?.accountPhotoURL
+                ? currentUserDBDetails?.userDetails?.accountPhotoURL
                 : currentUser?.photoUrl
             }
             className="sideBar__userAvatar pointer"
           />
           <div className="sideBar__userName pointer">
-            {currentUserInDB?.userData?.companyFullName ? (
+            {currentUserDBDetails?.userDetails?.companyUser ? (
               <>
                 <h3>
-                  {currentUserInDB?.userData?.accountDisplayName
-                    ? currentUserInDB?.userData?.accountDisplayName
-                    : currentUserInDB?.userData?.companyCeoName}
+                  {currentUserDBDetails?.userDetails?.accountDisplayName
+                    ? currentUserDBDetails?.userDetails?.accountDisplayName
+                    : currentUserDBDetails?.userDetails?.companyCeoName}
                 </h3>
-                <span>CEO @{currentUserInDB?.userData?.companyFullName}</span>
+                <span>
+                  CEO @{currentUserDBDetails?.userDetails?.companyFullName}
+                </span>
               </>
             ) : (
               <>
                 <h3>
-                  {currentUserInDB?.userData?.accountDisplayName
-                    ? currentUserInDB?.userData?.accountDisplayName
+                  {currentUserDBDetails?.userDetails?.accountDisplayName
+                    ? currentUserDBDetails?.userDetails?.accountDisplayName
                     : currentUser?.displayName}
                 </h3>
                 <span>
                   Member since:{" "}
                   {new Date(
-                    currentUserInDB?.userData?.memberSince?.toDate()
+                    currentUserDBDetails?.userDetails?.memberSince?.toDate()
                   ).toLocaleDateString()}
                 </span>
               </>

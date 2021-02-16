@@ -3,8 +3,8 @@ import "./loader.css";
 
 const GradientLoader = () => {
   return (
-    <div class="loading__sec">
-      <div class="loader">
+    <div className="loading__sec">
+      <div className="loader">
         <span></span>
       </div>
     </div>

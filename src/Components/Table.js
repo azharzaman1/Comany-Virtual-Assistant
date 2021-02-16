@@ -15,9 +15,9 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import {
   selectEmployeesList,
-  SET_EMPLOYEE_TO_EDIT,
-  SET_EMPLOYEE_EDIT_MODE,
-  SET_EMPLOYEE_TO_VIEW,
+  setEmployeeToEdit,
+  setEmployeeEditMode,
+  setEmployeeToView,
   selectEmployeeDepartments,
 } from "../redux/slices/employeesSlice";
 import { tableHeaderCells } from "./files/comapnyRoles";
@@ -28,19 +28,15 @@ import {
   EditOutlined,
   Search,
   Visibility,
-  Watch,
 } from "@material-ui/icons";
 import { db } from "../Files/firebase";
-import { collectionName } from "./files/utils";
 import {
-  selectCurrentUserInDB,
-  selectCurrentUserRole,
+  selectCurrentUserDBDetails,
   selectUser,
-  selectUserRef,
 } from "../redux/slices/userSlice";
 import {
-  SET_ADD_EMPLOYEE_POPUP,
-  SET_VIEW_EMPLOYEE_POPUP,
+  addNewEmployeePopup,
+  viewEmployeePopup,
 } from "../redux/slices/generalSlice";
 import { getFromLocalStorage } from "./files/LocalStorage";
 
@@ -55,10 +51,7 @@ const useStyles = makeStyles((theme) => ({
 const TableComponent = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
-  const userRef = useSelector(selectUserRef);
-  const currentUserInDB = useSelector(selectCurrentUserInDB);
-
-  const currentUserRole = useSelector(selectCurrentUserRole);
+  const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const employeesList = useSelector(selectEmployeesList);
   const companyRoles = useSelector(selectEmployeeDepartments);
   const pages = [5, 10, 25];
@@ -69,7 +62,11 @@ const TableComponent = () => {
       return items;
     },
   });
+
   const classes = useStyles();
+
+  const userRef = null;
+
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
@@ -103,9 +100,9 @@ const TableComponent = () => {
 
   const deleteEmployeeFromDB = (argID) => {
     let subscribe = () => {};
-    if (currentUserInDB) {
+    if (currentUserDBDetails) {
       subscribe = db
-        .collection(userRef ? userRef : getFromLocalStorage("userRef"))
+        .collection(userRef ? userRef : `${getFromLocalStorage("userRef")}s`)
         .doc(currentUser?.uid)
         .collection("employeesList")
         .doc(
@@ -134,13 +131,13 @@ const TableComponent = () => {
     );
     let employeeToEditId = employeeToEdit.id;
     dispatch(
-      SET_EMPLOYEE_TO_EDIT({
+      setEmployeeToEdit({
         ...employeeToEdit.employeeDetails,
         employeeToEditId,
       })
     );
-    dispatch(SET_EMPLOYEE_EDIT_MODE(true));
-    dispatch(SET_ADD_EMPLOYEE_POPUP(true));
+    dispatch(setEmployeeEditMode(true));
+    dispatch(addNewEmployeePopup(true));
   };
 
   const viewEmployeeDetails = (clickedEmployeeId) => {
@@ -151,13 +148,13 @@ const TableComponent = () => {
     const employeeToViewId = employeeToView.id;
 
     dispatch(
-      SET_EMPLOYEE_TO_VIEW({
+      setEmployeeToView({
         ...employeeToView.employeeDetails,
         employeeToViewId,
       })
     );
 
-    dispatch(SET_VIEW_EMPLOYEE_POPUP(true));
+    dispatch(viewEmployeePopup(true));
   };
 
   return (
@@ -181,7 +178,7 @@ const TableComponent = () => {
           color="secondary"
           variant="outlined"
           startIcon={<Add />}
-          onClick={() => dispatch(SET_ADD_EMPLOYEE_POPUP(true))}
+          onClick={() => dispatch(addNewEmployeePopup(true))}
         >
           Add New
         </Button>
