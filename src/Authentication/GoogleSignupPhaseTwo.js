@@ -61,9 +61,8 @@ const GoogleSignupPhaseTwo = () => {
             console.log("urrrrrrrrrrrrrrrrrrrrl", url);
             setAvatarUrl(url);
           });
-      } else {
-        return null;
       }
+
       console.log("Url 222222222", avatarUrl);
 
       let data = {
