@@ -19,3 +19,8 @@
 .fileAction__btns > button {
   margin: 1rem 0.15rem 0;
 }
+
+.uploadingProgress__indicator {
+  font-size: calc(12px + 0.4vw);
+  margin-top: 1rem;
+}

@@ -56,9 +56,7 @@ const Signup = () => {
 
   const signupHandler = async (e) => {
     e.preventDefault();
-    // if (fullName === "") {
-    //   setFullNameErr(true);
-    // }
+
     if (!validateEmail(email)) {
       setEmailErr(true);
     }
@@ -89,25 +87,6 @@ const Signup = () => {
     }
   };
 
-  const individualTab = document.getElementById("individualTab");
-  const companyTab = document.getElementById("companyTab");
-
-  const individualTabFunc = () => {
-    if (individualTab) {
-      individualTab.classList.add("activeTab");
-      companyTab.classList.remove("activeTab");
-      setRole("individual_user");
-    }
-  };
-
-  const campanyTabFunc = () => {
-    if (companyTab) {
-      companyTab.classList.add("activeTab");
-      individualTab.classList.remove("activeTab");
-      setRole("company_user");
-    }
-  };
-
   return (
     <div className="signup absc-center">
       <Card>
@@ -116,81 +95,41 @@ const Signup = () => {
           className="signup__from absc-center mar-0-auto"
         >
           <h3 className="signup__tagline t-center">Signup for VAA</h3>
-          <div className="signup__userRole">
-            <h3 className="t-center">Are you?</h3>
-            <div className="userRole__btns">
-              <span id="individualTab" onClick={individualTabFunc}>
-                An Individual
-              </span>
-              <span id="companyTab" onClick={campanyTabFunc}>
-                A Comapany
-              </span>
-            </div>
+          <div className="signup__inputs">
+            <Input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              type="email"
+              label="Valid Email Address"
+              error={emailErr}
+              helperText={emailErr ? "Enter valid Email Address" : ""}
+            />
+            <Input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              type="password"
+              label="Strong Password"
+              error={passwordErr}
+              helperText={passwordErr ? "This field is required" : ""}
+            />
+            <Input
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              value={passwordConfirm}
+              type="password"
+              label="Password Confirmation"
+              error={passwordConfirmErr}
+              helperText={passwordConfirmErr ? "Passwords dont match!" : ""}
+            />
           </div>
-          {role == "" ? (
-            <></>
-          ) : (
-            <>
-              <div className="signup__inputs">
-                <Input
-                  onChange={(e) => setFullName(e.target.value)}
-                  value={fullName}
-                  type="text"
-                  label={
-                    role === "individual_user" ? "Full name" : "Company name"
-                  }
-                  error={fullNameErr}
-                  helperText={fullNameErr ? "This field is required" : ""}
-                />
-                {role === "company_user" && (
-                  <Input
-                    onChange={(e) => setCompanyCeoName(e.target.value)}
-                    value={companyCeoName}
-                    type="text"
-                    label="Company CEO Name"
-                    error={companyCeoNameErr}
-                    helperText={
-                      companyCeoNameErr ? "This field is required" : ""
-                    }
-                  />
-                )}
 
-                <Input
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  type="email"
-                  label="Valid Email Address"
-                  error={emailErr}
-                  helperText={emailErr ? "Enter valid Email Address" : ""}
-                />
-                <Input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  type="password"
-                  label="Strong Password"
-                  error={passwordErr}
-                  helperText={passwordErr ? "This field is required" : ""}
-                />
-                <Input
-                  onChange={(e) => setPasswordConfirm(e.target.value)}
-                  value={passwordConfirm}
-                  type="password"
-                  label="Password Confirmation"
-                  error={passwordConfirmErr}
-                  helperText={passwordConfirmErr ? "Passwords dont match!" : ""}
-                />
-              </div>
-
-              <Button
-                color="primary"
-                variant="contained"
-                type="submit"
-                className="signup__btn"
-              >
-                Continue
-              </Button>
-            </>
-          )}
+          <Button
+            color="primary"
+            variant="contained"
+            type="submit"
+            className="signup__btn"
+          >
+            Continue
+          </Button>
 
           <div className="signup__providers">
             <h3 className="t-center">OR</h3>

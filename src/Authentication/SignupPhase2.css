@@ -1,0 +1,18 @@
+.signup__phase2 {
+  width: 100%;
+  height: 100%;
+  background-color: #eeeeee;
+}
+
+.signupPhase2__content {
+  padding: 1rem 0.8rem 2rem;
+  width: 25rem;
+  max-width: 96vw;
+}
+
+.signup__phase2Inputs {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Share styles with './GoogleAuthPhaseTwo.css' */

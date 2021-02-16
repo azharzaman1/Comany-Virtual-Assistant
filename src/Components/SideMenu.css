@@ -2,9 +2,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  flex: 0.18;
+  width: 18%;
   background-color: #253053;
   color: rgb(243, 243, 243);
+  transition: width 0.25s;
 }
 
 .sidebar__header {
@@ -15,7 +16,7 @@
   justify-content: flex-start;
   align-items: center;
   background-color: #34457a;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.3);
   margin-bottom: 0.5px;
 }
@@ -28,10 +29,6 @@
   color: lightgray !important;
   text-transform: inherit;
 }
-
-/* .sideBar__userAvatar {
-  border: 1.5px solid rgb(245, 245, 245) !important;
-} */
 
 .sideBar__userName {
   margin-left: 0.5rem;
@@ -57,7 +54,7 @@
 .sideBar__navItem {
   color: rgb(241, 241, 241);
   font-size: 18px;
-  line-height: 65px;
+  padding: 1.25rem 0;
   padding-left: 30px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 1);
@@ -65,15 +62,57 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  transition: padding 0.3s;
   cursor: pointer;
   user-select: none;
+  transition: all 0.3s;
 }
 
 .sideBar__navItem:hover {
   padding-left: 40px;
+  background-color: #314175;
 }
 
 .sideBar__navItem > svg {
   margin-right: 15px;
 }
+
+/* Shrinkd Stylings */
+
+.appSideMenu__shrinked {
+  width: 5rem;
+}
+
+.appSideMenu__shrinked .sidebar__header {
+  height: 5rem;
+  justify-content: center;
+}
+
+.appSideMenu__shrinked .sidebar__header .sideBar__userAvatar {
+  width: 45px !important;
+  height: 45px !important;
+}
+
+.appSideMenu__shrinked .sideBar__navItem span {
+  display: none;
+}
+
+.appSideMenu__shrinked .sideBar__navItem {
+  padding-left: 0;
+  justify-content: center;
+}
+
+.appSideMenu__shrinked .sideBar__navItem:hover {
+  padding-left: 0;
+}
+
+.appSideMenu__shrinked .sideBar__navItem svg {
+  font-size: 25px;
+  margin-right: 7px;
+}
+
+.appSideMenu__shrinked .sideBar__navItem:hover svg {
+  transform: scale(1.175);
+}
+
+/* .sideBar__navItemToolTip {
+} */

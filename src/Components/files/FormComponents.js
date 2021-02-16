@@ -1,7 +1,16 @@
 import React, { useRef } from "react";
-import { Avatar, Button, Paper, TextField } from "@material-ui/core";
+import {
+  Avatar,
+  Button,
+  Paper,
+  TextField,
+  CircularProgress,
+  Box,
+  Typography,
+  LinearProgress,
+} from "@material-ui/core";
+import PropTypes from "prop-types";
 import "./FormComponentsGen.css";
-import { CallMergeTwoTone } from "@material-ui/icons";
 
 export const Input = ({
   label,
@@ -37,6 +46,7 @@ export const UploadAvatar = ({
   needActionTwoBtn,
   actionTwo,
   uploading,
+  progress,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -53,28 +63,51 @@ export const UploadAvatar = ({
         ref={fileInputRef}
         onChange={uploadFileHandler}
       />
-      <div className="fileAction__btns">
-        <Button
-          disabled={uploading}
-          onClick={() => {
-            fileInputRef.current.click();
-          }}
-          variant="contained"
-          color="primary"
-        >
-          Change Avatar
-        </Button>
-        {needActionTwoBtn && (
+      {uploading ? (
+        <h3 className="uploadingProgress__indicator t-center">
+          Upload In Progress... {`${Math.round(progress)}%`}
+        </h3>
+      ) : (
+        <div className="fileAction__btns">
           <Button
-            disabled={uploading}
-            onClick={actionTwo}
+            onClick={() => {
+              fileInputRef.current.click();
+            }}
             variant="contained"
             color="primary"
           >
-            Upload
+            Change Avatar
           </Button>
-        )}
-      </div>
+          {needActionTwoBtn && (
+            <Button onClick={actionTwo} variant="contained" color="primary">
+              Upload
+            </Button>
+          )}
+        </div>
+      )}
     </Paper>
   );
+};
+
+export const UploadingProgress = (props) => {
+  return (
+    <Box display="flex" alignItems="center">
+      <Box width="100%" mr={2}>
+        <LinearProgress color="primary" variant="determinate" {...props} />
+      </Box>
+      <Box minWidth={125}>
+        <Typography variant="body2" color="textSecondary">{`${Math.round(
+          props.progress
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+};
+
+UploadingProgress.propTypes = {
+  /**
+   * The value of the progress indicator for the determinate variant.
+   * Value between 0 and 100.
+   */
+  value: PropTypes.number.isRequired,
 };

@@ -20,18 +20,19 @@
   cursor: pointer;
 }
 
-.table__formInput {
-  width: 85%;
-}
-
 .table__header {
   display: flex;
   justify-content: space-between;
+  padding: 0 0.65rem !important;
+}
+
+.table__formInput {
+  flex: 1;
 }
 
 .tableHeader__button {
   text-transform: inherit !important;
-  padding: 0.36rem 1rem !important;
+  margin: 0 0 0 1.5rem !important;
 }
 
 .popup__header {

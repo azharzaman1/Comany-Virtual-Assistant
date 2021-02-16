@@ -27,7 +27,11 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Signup from "./Authentication/Signup";
 import Signin from "./Authentication/Signin";
 import GradientLoader from "./Components/loading/GradientLoader";
-import { selectLoadingState, setLoading } from "./redux/slices/generalSlice";
+import {
+  selectLoadingState,
+  setLoading,
+  setShrinkSideBar,
+} from "./redux/slices/generalSlice";
 import Popup from "./Components/Popup";
 import GoogleAuthPhaseTwo from "./Authentication/GoogleSignupPhaseTwo";
 import { sortById } from "./Components/files/utils";
@@ -40,6 +44,20 @@ const App = () => {
   const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const loadingState = useSelector(selectLoadingState);
   const [tempUsers, setTempUsers] = useState([]);
+
+  // == Media queries in JS == //
+  function myFunction(querry) {
+    if (querry.matches) {
+      dispatch(setShrinkSideBar(true));
+    } else {
+      dispatch(setShrinkSideBar(false));
+    }
+  }
+
+  var querry = window.matchMedia("(max-width: 1100px)");
+  myFunction(querry);
+  querry.addListener(myFunction);
+
   // Fetch All user details
 
   useEffect(() => {

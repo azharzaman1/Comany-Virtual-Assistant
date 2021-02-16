@@ -24,6 +24,8 @@ const GoogleSignupPhaseTwo = () => {
   const [avatarUrl, setAvatarUrl] = useState(undefined);
   const [avatarPreview, setAvatarPreview] = useState(undefined);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const history = useHistory();
 
   console.log("Final URL", avatarUrl);
@@ -49,21 +51,32 @@ const GoogleSignupPhaseTwo = () => {
     const fileID = uuid();
     const metadata = { contentType: avatar?.type };
     setUploading(true);
-    await storage
-      .ref(`avatars/${fileID}`)
-      .put(avatar, metadata)
-      .then((snapshot) => snapshot.ref.getDownloadURL())
-      .then((url) => {
-        if (url) {
-          setUploading(false);
-          setAvatarUrl(url);
-        } else {
-          alert(
-            "Uncaught Internal Server error: (Unable to upload your avatar, please try again or you can upload it later from dashboard)"
-          );
-          setUploading(false);
-        }
-      });
+
+    const uploadTask = storage.ref(`avatars/${fileID}`).put(avatar, metadata);
+
+    await uploadTask.on(
+      "state_changed",
+      function progress(snapshot) {
+        setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        console.log("Snaphot", snapshot);
+        console.log("Bytes Transfered", snapshot.bytesTransferred);
+      },
+      (error) => {
+        alert(error.message);
+      },
+      () => {
+        storage
+          .ref("avatars")
+          .child(fileID)
+          .getDownloadURL()
+          .then((url) => {
+            if (url) {
+              setUploading(false);
+              setAvatarUrl(url);
+            }
+          });
+      }
+    );
   };
 
   const proceedToDashboard = async () => {
@@ -155,9 +168,10 @@ const GoogleSignupPhaseTwo = () => {
               needImgPreview
               setSelectedFile={setAvatar}
               imgSrc={avatarPreview ? avatarPreview : currentUser?.photoUrl}
-              needActionTwoBtn={avatarPreview ? true : false}
+              needActionTwoBtn={avatarPreview && !avatarUrl ? true : false}
               actionTwo={uploadAvatarToDB}
               uploading={uploading}
+              progress={progress}
             />
             <Input
               onChange={(e) => setFullName(e.target.value)}
