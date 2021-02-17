@@ -26,7 +26,6 @@ const EmployeeDetailedView = () => {
   const employeeToView = useSelector(selectEmployeeToView);
 
   const deleteEmployeeFromDB = async (employeeBeingViewedId) => {
-    console.log(employeeBeingViewedId);
     if (currentUserDBDetails) {
       await db
         .collection(userCollection)

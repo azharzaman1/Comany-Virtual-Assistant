@@ -22,7 +22,7 @@ const PageChangeAbleContentSection = () => {
   return (
     <>
       <SectionHeader
-        title="All Employees"
+        title="Employees Record"
         subTitle="List of your Employees"
         icon={<PeopleOutlineTwoTone color="primary" fontSize="large" />}
       />

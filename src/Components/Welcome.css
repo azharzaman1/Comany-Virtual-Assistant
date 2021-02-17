@@ -1,0 +1,23 @@
+.welcomeSection {
+  text-align: center;
+  margin: 4rem 1rem 0;
+}
+
+.welcomeSection > h1 {
+  text-transform: uppercase;
+  color: #f50057;
+  font-size: calc(14px + 1.65vw);
+}
+
+.welcomeSection > h3 {
+  font-weight: 400;
+  margin-top: 0.65rem;
+  font-size: calc(12px + 1vw);
+}
+
+.welcomeSection > h2 {
+  font-weight: 400;
+  color: #2a4cbd;
+  margin-top: 0.65rem;
+  font-size: calc(14px + 1.25vw);
+}

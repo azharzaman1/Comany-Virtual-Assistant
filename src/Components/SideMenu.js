@@ -24,6 +24,7 @@ import {
 import {
   selectSidebarState,
   setShrinkSideBar,
+  selectActiveSectionIndex,
 } from "../redux/slices/generalSlice";
 import { useSelector, useDispatch } from "react-redux";
 import NavigationOption from "./NavigationOption";
@@ -34,6 +35,7 @@ const SideMenu = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(selectUser);
   const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
+  const activeSectionIndex = useSelector(selectActiveSectionIndex);
   const shrinkSidebar = useSelector(selectSidebarState);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -164,46 +166,57 @@ const SideMenu = () => {
           tooltip={shrinkSidebar ? "Employees List" : ""}
           text="Employees List"
           icon={<SupervisedUserCircle />}
+          section="/employees"
+          sectionIndex={1}
+          activeLink={activeSectionIndex === 1}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "Interviews" : ""}
           text="Interviews"
           icon={<Wc />}
+          section="/interviews"
+          sectionIndex={2}
+          activeLink={activeSectionIndex === 2}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "Meetings" : ""}
           text="Meetings"
           icon={<PeopleAlt />}
+          section="/meetings"
+          sectionIndex={3}
+          activeLink={activeSectionIndex === 3}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "Company Events" : ""}
           text="Company Events"
           icon={<EventAvailable />}
+          section="/company-events"
+          sectionIndex={4}
+          activeLink={activeSectionIndex === 4}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "Stock News" : ""}
           text="Stock News"
           icon={<ShowChart />}
-        />
-        <NavigationOption
-          tooltip={shrinkSidebar ? "Company States" : ""}
-          text="Company States"
-          icon={<Equalizer />}
-        />
-        <NavigationOption
-          tooltip={shrinkSidebar ? "Others" : ""}
-          text="Others"
-          icon={<Notes />}
+          section="/stock-news"
+          sectionIndex={5}
+          activeLink={activeSectionIndex === 5}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "FAQs" : ""}
           text="FAQs"
           icon={<HelpOutline />}
+          section="/frequently-asked-questions"
+          sectionIndex={6}
+          activeLink={activeSectionIndex === 6}
         />
         <NavigationOption
           tooltip={shrinkSidebar ? "Help" : ""}
           text="Help"
           icon={<Accessibility />}
+          section="/help"
+          sectionIndex={7}
+          activeLink={activeSectionIndex === 7}
         />
         {shrinkSidebar ? (
           <NavigationOption

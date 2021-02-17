@@ -72,6 +72,10 @@
   background-color: #314175;
 }
 
+.sideBar__ActiveNavItem {
+  background-color: #283664;
+}
+
 .sideBar__navItem > svg {
   margin-right: 15px;
 }
@@ -113,6 +117,3 @@
 .appSideMenu__shrinked .sideBar__navItem:hover svg {
   transform: scale(1.175);
 }
-
-/* .sideBar__navItemToolTip {
-} */
