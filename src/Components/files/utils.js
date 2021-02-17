@@ -13,9 +13,7 @@ export const setToDoc = async (col, doc, data) => {
     .collection(col)
     .doc(doc)
     .set(data, { merge: true })
-    .then(() => {
-      console.log("Document Setted Successfully");
-    });
+    .then(() => {});
 };
 
 export const getFromDoc = async (col, doc, sortResult, set) => {

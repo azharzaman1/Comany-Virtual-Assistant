@@ -1,0 +1,20 @@
+.pendingSection__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pendingSection__content h3 {
+  font-size: calc(16px + 1vw);
+  font-weight: 400;
+  margin-top: 2rem;
+  color: #f50057;
+}
+
+.pendingSection__content h3 > span {
+  font-size: calc(12px + 1vw);
+  font-weight: 400;
+  margin-top: 2rem;
+  color: #2a4cbd;
+}

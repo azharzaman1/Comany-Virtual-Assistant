@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Grid, Paper } from "@material-ui/core";
-import "./PageHeader.css";
+import "./SectionHeader.css";
 
 const SectionHeader = ({ title, subTitle, icon }) => {
   return (

@@ -1,6 +1,2 @@
-
-.... Sidemenu options content
-.... Fininshing Touches
-.... Console.logs 
 .... Code Clearing 
 .... Final Testing

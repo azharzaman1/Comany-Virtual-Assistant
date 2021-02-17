@@ -58,8 +58,6 @@ const SignupPhaseTwo = () => {
       "state_changed",
       function progress(snapshot) {
         setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log("Snaphot", snapshot);
-        console.log("Bytes Transfered", snapshot.bytesTransferred);
       },
       (error) => {
         alert(error.message);

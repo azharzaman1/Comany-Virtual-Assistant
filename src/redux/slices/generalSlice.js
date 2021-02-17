@@ -5,6 +5,7 @@ const initialState = {
   employeeDetailedViewState: false,
   loadingState: false,
   shrinkSidebar: false,
+  activeSectionIndex: 0,
 };
 
 const generalSlice = createSlice({
@@ -35,6 +36,12 @@ const generalSlice = createSlice({
         shrinkSidebar: action.payload,
       };
     },
+    setActiveSectionI: (state, action) => {
+      return {
+        ...state,
+        activeSectionIndex: action.payload,
+      };
+    },
   },
 });
 
@@ -44,6 +51,7 @@ export const {
   setLoading,
   setShrinkSideBar,
   setFetchUserDetails,
+  setActiveSectionI,
 } = generalSlice.actions;
 
 export const selectAddEmployeePopupState = (state) =>
@@ -54,5 +62,7 @@ export const selectLoadingState = (state) => state.generalStore.loadingState;
 export const selectSidebarState = (state) => state.generalStore.shrinkSidebar;
 export const selectFetchUserDetails = (state) =>
   state.generalStore.fetchUserDetails;
+export const selectActiveSectionIndex = (state) =>
+  state.generalStore.activeSectionIndex;
 
 export default generalSlice.reducer;
