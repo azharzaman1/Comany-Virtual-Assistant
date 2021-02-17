@@ -3,11 +3,15 @@ import { Button, Paper } from "@material-ui/core";
 import "./GoogleAuthPhaseTwo.css";
 import { Input, UploadAvatar } from "../Components/files/FormComponents";
 import { Link, useHistory } from "react-router-dom";
-import { getFromDoc, setToDoc, sortById } from "../Components/files/utils";
+import { getFromDoc, setToDoc } from "../Components/files/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../redux/slices/userSlice";
+import {
+  selectUser,
+  setCurrentUserDBDetails,
+  setUserCollection,
+} from "../redux/slices/userSlice";
 import firebase from "firebase";
-import { storage } from "../Files/firebase";
+import { db, storage } from "../Files/firebase";
 import { v4 as uuid } from "uuid";
 import { setToLocalStorage } from "../Components/files/LocalStorage";
 
@@ -28,11 +32,7 @@ const GoogleSignupPhaseTwo = () => {
 
   const history = useHistory();
 
-  console.log("Final URL", avatarUrl);
-
   useEffect(() => {
-    console.log(avatar);
-
     if (!avatar) {
       setAvatarPreview(undefined);
       return;
@@ -58,8 +58,6 @@ const GoogleSignupPhaseTwo = () => {
       "state_changed",
       function progress(snapshot) {
         setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        console.log("Snaphot", snapshot);
-        console.log("Bytes Transfered", snapshot.bytesTransferred);
       },
       (error) => {
         alert(error.message);
@@ -124,7 +122,19 @@ const GoogleSignupPhaseTwo = () => {
 
       setToDoc("all_users", currentUser?.uid, dataAll);
       setToLocalStorage("googleSignup_phase2", true);
+
       setToLocalStorage("userRole", role);
+
+      await db
+        .collection(`${role}s`)
+        .doc(currentUser?.uid)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            dispatch(setCurrentUserDBDetails(doc.data()));
+          }
+        });
+
       history.replace("/");
     }
   };
@@ -137,6 +147,8 @@ const GoogleSignupPhaseTwo = () => {
       individualTab.classList.add("activeTab");
       companyTab.classList.remove("activeTab");
       setRole("individual_user");
+      setToLocalStorage("userRole", "individual_user");
+      dispatch(setUserCollection("individual_users"));
     }
   };
 
@@ -145,6 +157,8 @@ const GoogleSignupPhaseTwo = () => {
       companyTab.classList.add("activeTab");
       individualTab.classList.remove("activeTab");
       setRole("company_user");
+      setToLocalStorage("userRole", "company_user");
+      dispatch(setUserCollection("company_users"));
     }
   };
 

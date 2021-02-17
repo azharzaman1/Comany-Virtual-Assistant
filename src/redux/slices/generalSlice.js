@@ -43,6 +43,7 @@ export const {
   viewEmployeePopup,
   setLoading,
   setShrinkSideBar,
+  setFetchUserDetails,
 } = generalSlice.actions;
 
 export const selectAddEmployeePopupState = (state) =>
@@ -51,5 +52,7 @@ export const selectEmployeeDetailedViewState = (state) =>
   state.generalStore.employeeDetailedViewState;
 export const selectLoadingState = (state) => state.generalStore.loadingState;
 export const selectSidebarState = (state) => state.generalStore.shrinkSidebar;
+export const selectFetchUserDetails = (state) =>
+  state.generalStore.fetchUserDetails;
 
 export default generalSlice.reducer;

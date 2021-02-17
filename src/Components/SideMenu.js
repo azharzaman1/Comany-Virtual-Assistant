@@ -49,6 +49,7 @@ const SideMenu = () => {
     auth.signOut();
     setAnchorEl(null);
     dispatch(loggedOutRecently());
+    localStorage.removeItem("userRole");
   };
 
   const verifyAccountHandler = () => {

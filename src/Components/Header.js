@@ -10,13 +10,14 @@ import {
 import {
   BorderAll,
   ChatBubbleOutline,
+  NotificationsActive,
   NotificationsNone,
   PowerSettingsNew,
   Search,
 } from "@material-ui/icons";
 import "./Header.css";
 
-const Header = () => {
+const Header = ({ notifications, messages }) => {
   return (
     <AppBar className="app__header" position="static">
       <Toolbar>
@@ -32,21 +33,37 @@ const Header = () => {
 
           <Grid item>
             <IconButton color="secondary">
-              <Badge color="secondary" badgeContent={4}>
-                <NotificationsNone className="header__icon" fontSize="small" />
+              <Badge
+                className="headerIcons__badge"
+                color="secondary"
+                badgeContent={notifications}
+              >
+                {notifications > 0 ? (
+                  <NotificationsActive
+                    className="header__icon"
+                    color="secondary"
+                  />
+                ) : (
+                  <NotificationsNone
+                    className="header__icon"
+                    color="secondary"
+                  />
+                )}
               </Badge>
             </IconButton>
             <IconButton color="secondary">
-              <Badge color="secondary" badgeContent={2}>
-                <ChatBubbleOutline className="header__icon" fontSize="small" />
+              <Badge
+                className="headerIcons__badge"
+                color="secondary"
+                badgeContent={messages}
+              >
+                <ChatBubbleOutline
+                  className="header__icon"
+                  fontSize="small"
+                  color="secondary"
+                />
               </Badge>
             </IconButton>
-            {/* <IconButton
-              onClick={signoutHandler}
-              color={currentUser ? "secondary" : "primary"}
-            >
-              <PowerSettingsNew className="header__icon" fontSize="small" />
-            </IconButton> */}
           </Grid>
         </Grid>
       </Toolbar>

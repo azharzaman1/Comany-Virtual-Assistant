@@ -1,4 +1,6 @@
-.... Employee Departments List Pattern
-.... Authentication
-.... Implemanting LocalStorage
-.... Draft functionality
+
+.... Sidemenu options content
+.... Fininshing Touches
+.... Console.logs 
+.... Code Clearing 
+.... Final Testing

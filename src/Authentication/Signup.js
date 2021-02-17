@@ -44,14 +44,14 @@ const Signup = () => {
           if (!getFromLocalStorage("googleSignup_phase2")) {
             setToLocalStorage("googleSignup_phase2", false);
           }
+          if (getFromLocalStorage("googleSignup_phase2")) {
+            history.replace("/");
+          } else {
+            history.replace("/auth/registration/google/phase-two");
+          }
         }
       })
       .catch((error) => alert(error.message));
-    if (getFromLocalStorage("googleSignup_phase2")) {
-      history.replace("/");
-    } else {
-      history.replace("/auth/registration/google/phase-two");
-    }
   };
 
   const signupHandler = async (e) => {

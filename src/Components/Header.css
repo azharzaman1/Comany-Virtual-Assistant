@@ -19,6 +19,6 @@
   background-color: #f2f2f2;
 }
 
-.header__icon {
-  color: gray !important;
+.MuiBadge-badge {
+  background-color: #455aa0 !important;
 }

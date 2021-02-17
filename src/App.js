@@ -27,12 +27,13 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Signup from "./Authentication/Signup";
 import Signin from "./Authentication/Signin";
 import GradientLoader from "./Components/loading/GradientLoader";
+import Popup from "./Components/Popup";
+
 import {
   selectLoadingState,
   setLoading,
   setShrinkSideBar,
 } from "./redux/slices/generalSlice";
-import Popup from "./Components/Popup";
 import GoogleAuthPhaseTwo from "./Authentication/GoogleSignupPhaseTwo";
 import { sortById } from "./Components/files/utils";
 import SignupPhaseTwo from "./Authentication/SignupPhaseTwo";
@@ -43,7 +44,6 @@ const App = () => {
   const userCollection = useSelector(selectUserCollec);
   const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
   const loadingState = useSelector(selectLoadingState);
-  const [tempUsers, setTempUsers] = useState([]);
 
   // == Media queries in JS == //
   function myFunction(querry) {
@@ -63,38 +63,35 @@ const App = () => {
   useEffect(() => {
     console.log("Current logged in User >>>>", currentUser);
 
-    // Will not be called if userRole is already present in localStorage
-
-    const fetchCollectionFromDB = () => {
-      console.log("Called");
-      return db
-        .collection("all_users")
-        .onSnapshot((snapshot) =>
-          snapshot.docs
-            .map((doc) => doc.data())
-            .find((user) => user?.uid == currentUser?.uid)
-        );
-    };
-
-    dispatch(
-      setUserCollection(
-        getFromLocalStorage("userRole")
-          ? `${getFromLocalStorage("userRole")}s`
-          : `${fetchCollectionFromDB?.userRole}s`
-      )
-    );
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (currentUser) {
-      db.collection(userCollection)
+    if (getFromLocalStorage("userRole")) {
+      dispatch(setUserCollection(getFromLocalStorage("userRole")));
+    } else {
+      db.collection("all_users")
         .doc(currentUser?.uid)
         .get()
         .then((doc) => {
           if (doc.exists) {
-            dispatch(setCurrentUserDBDetails(doc.data()));
+            dispatch(setUserCollection(`${doc.data()?.userRole}s`));
           }
         });
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      console.log("Clue 0", userCollection);
+      console.log("Clue 1", currentUser);
+      if (userCollection) {
+        db.collection(userCollection)
+          .doc(currentUser?.uid)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              console.log("Clue two", doc.data());
+              dispatch(setCurrentUserDBDetails(doc.data()));
+            }
+          });
+      }
     }
   }, [currentUser, userCollection]);
 
@@ -178,7 +175,7 @@ const App = () => {
             <Route exact path="/">
               <SideMenu />
               <div className="app__changeableContent">
-                <Header />
+                <Header notifications={2} messages={1} />
                 <AppDynamicSection />
               </div>
             </Route>

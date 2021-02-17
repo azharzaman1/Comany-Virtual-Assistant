@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Button, Paper } from "@material-ui/core";
 import "./GoogleAuthPhaseTwo.css";
-import {
-  Input,
-  UploadAvatar,
-  UploadingProgress,
-} from "../Components/files/FormComponents";
+import { Input, UploadAvatar } from "../Components/files/FormComponents";
 import { Link, useHistory } from "react-router-dom";
-import { getFromDoc, setToDoc, sortById } from "../Components/files/utils";
+import { getFromDoc, setToDoc } from "../Components/files/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../redux/slices/userSlice";
+import {
+  selectUser,
+  setCurrentUserDBDetails,
+  setUserCollection,
+} from "../redux/slices/userSlice";
 import firebase from "firebase";
-import { storage } from "../Files/firebase";
+import { db, storage } from "../Files/firebase";
 import { v4 as uuid } from "uuid";
 import "./SignupPhase2.css";
+import { setToLocalStorage } from "../Components/files/LocalStorage";
 
 const SignupPhaseTwo = () => {
   const dispatch = useDispatch();
@@ -88,6 +89,7 @@ const SignupPhaseTwo = () => {
           accountDisplayName:
             role == "company_user" ? companyCeoName : fullName,
           accountPhotoURL: avatarUrl ? avatarUrl : "",
+          email: currentUser?.email,
           companyUser: role == "company_user" ? true : false,
           companyFullName: role == "company_user" ? fullName : "",
           companyCeoName: role == "company_user" ? companyCeoName : "",
@@ -107,6 +109,8 @@ const SignupPhaseTwo = () => {
         companyUser: role == "company_user" ? true : false,
         companyFullName: role == "company_user" ? fullName : "",
         companyCeoName: role == "company_user" ? companyCeoName : "",
+        email: currentUser?.email,
+
         userRole: role,
         emailVerified: currentUser?.emailVerified,
         memberSince: firebase.firestore.FieldValue.serverTimestamp(),
@@ -114,6 +118,16 @@ const SignupPhaseTwo = () => {
       };
 
       await setToDoc("all_users", currentUser?.uid, dataToWrite2);
+
+      await db
+        .collection(`${role}s`)
+        .doc(currentUser?.uid)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            dispatch(setCurrentUserDBDetails(doc.data()));
+          }
+        });
 
       history.replace("/");
     }
@@ -127,6 +141,8 @@ const SignupPhaseTwo = () => {
       individualTab.classList.add("activeTab");
       companyTab.classList.remove("activeTab");
       setRole("individual_user");
+      setToLocalStorage("userRole", "individual_user");
+      dispatch(setUserCollection("individual_users"));
     }
   };
 
@@ -135,6 +151,8 @@ const SignupPhaseTwo = () => {
       companyTab.classList.add("activeTab");
       individualTab.classList.remove("activeTab");
       setRole("company_user");
+      setToLocalStorage("userRole", "company_user");
+      dispatch(setUserCollection("company_users"));
     }
   };
 
