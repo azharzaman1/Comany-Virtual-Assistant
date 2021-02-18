@@ -38,5 +38,10 @@
 .copyright__section > h3 > a {
   font-family: "Poppins", sans-serif !important;
   font-weight: 500;
-  color: #111;
+  color: rgb(63, 63, 63);
+  transition: color 0.2s;
+}
+
+.copyright__section > h3 > a:hover {
+  color: #f50057;
 }
