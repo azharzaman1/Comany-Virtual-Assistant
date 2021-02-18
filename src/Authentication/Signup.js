@@ -16,24 +16,16 @@ import {
 import { Input } from "../Components/files/FormComponents";
 
 const Signup = () => {
-  const dispatch = useDispatch();
-  const currentUser = useSelector(selectUser);
-  const [role, setRole] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [companyCeoName, setCompanyCeoName] = useState("");
-  const [companyCeoNameErr, setCompanyCeoNameErr] = useState(false);
-  const [fullNameErr, setFullNameErr] = useState(false);
   const [email, setEmail] = useState("");
   const [emailErr, setEmailErr] = useState(false);
   const [password, setPassword] = useState("");
   const [passwordErr, setPasswordErr] = useState(false);
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [passwordConfirmErr, setPasswordConfirmErr] = useState(false);
-  const [tempDepartments, setDefaultDepartments] = useState();
 
   const history = useHistory();
 
-  document.title = "CVA | Registration";
+  document.title = "Registration | CVA";
 
   const signUpWithGoogle = async () => {
     await auth

@@ -31,6 +31,8 @@ const SignupPhaseTwo = () => {
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
 
+  document.title = "Registration PhaseII | CVA";
+
   const history = useHistory();
   useEffect(() => {
     if (!avatar) {

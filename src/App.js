@@ -26,10 +26,11 @@ import {
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import Signup from "./Authentication/Signup";
 import Signin from "./Authentication/Signin";
-import GradientLoader from "./Components/loading/GradientLoader";
-import Popup from "./Components/Popup";
+// import GradientLoader from "./Components/loading/GradientLoader";
+// import Popup from "./Components/Popup";
 
 import {
+  selectActiveSectionIndex,
   selectLoadingState,
   setLoading,
   setShrinkSideBar,
@@ -45,8 +46,26 @@ const App = () => {
   const currentUser = useSelector(selectUser);
   const userCollection = useSelector(selectUserCollec);
   const currentUserDBDetails = useSelector(selectCurrentUserDBDetails);
-  const loadingState = useSelector(selectLoadingState);
-  const [dynamicSectionToRender, setDynamicSectionToRender] = useState(<></>);
+  const activeSectionIndex = useSelector(selectActiveSectionIndex);
+  // const loadingState = useSelector(selectLoadingState);
+
+  useEffect(() => {
+    if (activeSectionIndex === 1) {
+      document.title = "Employees Record | CVA";
+    } else if (activeSectionIndex === 2) {
+      document.title = "Interviews | CVA";
+    } else if (activeSectionIndex === 3) {
+      document.title = "Meetings Schedule | CVA";
+    } else if (activeSectionIndex === 4) {
+      document.title = "Company Events | CVA";
+    } else if (activeSectionIndex === 5) {
+      document.title = "Stock News | CVA";
+    } else if (activeSectionIndex === 6) {
+      document.title = "FAQs | CVA";
+    } else if (activeSectionIndex === 7) {
+      document.title = "Help | CVA";
+    }
+  }, [activeSectionIndex]);
 
   // == Media queries in JS == //
 

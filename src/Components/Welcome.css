@@ -5,14 +5,17 @@
 
 .welcomeSection > h1 {
   text-transform: uppercase;
-  color: #f50057;
+  /* color: #f50057; */
+  color: #2a4cbd;
   font-size: calc(14px + 1.65vw);
+  font-family: "Poppins", sans-serif !important;
 }
 
 .welcomeSection > h3 {
   font-weight: 400;
   margin-top: 0.65rem;
   font-size: calc(12px + 1vw);
+  font-family: "Poppins", sans-serif !important;
 }
 
 .welcomeSection > h2 {
@@ -20,4 +23,20 @@
   color: #2a4cbd;
   margin-top: 0.65rem;
   font-size: calc(14px + 1.25vw);
+  font-family: "Poppins", sans-serif !important;
+}
+
+.copyright__section {
+  margin-top: 1.5rem;
+}
+
+.copyright__section > h3 {
+  font-family: "Poppins", sans-serif !important;
+  font-size: calc(12px + 0.75vw);
+}
+
+.copyright__section > h3 > a {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 500;
+  color: #111;
 }

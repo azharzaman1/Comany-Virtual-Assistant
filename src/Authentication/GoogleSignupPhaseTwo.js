@@ -32,6 +32,8 @@ const GoogleSignupPhaseTwo = () => {
 
   const history = useHistory();
 
+  document.title = "Registration PhaseII | CVA";
+
   useEffect(() => {
     if (!avatar) {
       setAvatarPreview(undefined);

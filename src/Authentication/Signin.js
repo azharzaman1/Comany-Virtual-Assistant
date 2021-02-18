@@ -18,6 +18,8 @@ const Signin = () => {
 
   const history = useHistory();
 
+  document.title = "Signin | CVA";
+
   const signInWithGoogle = async () => {
     await auth
       .signInWithPopup(googleProvider)
